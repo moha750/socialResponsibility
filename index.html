@@ -1,0 +1,855 @@
+<title>حصر المنشآت وفرص الشراكة</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@500;700;900&display=swap">
+<style>
+:root{
+  --navy:#1B3984; --teal:#007E7B; --blue:#2680C2; --green:#01A993;
+  --ground:#EFF4F4; --surface:#FFFFFF; --surface-2:#F6FAFA;
+  --ink:#232E33; --muted:#5F7379; --line:#D9E4E4; --line-strong:#BFD0D0;
+  --accent:#1B3984; --accent-ink:color-mix(in srgb,var(--accent) 68%,var(--ink)); --on-navy:#FFFFFF;
+  --danger:#B4452C; --danger-soft:#FBEDE9;
+  --shadow:0 1px 2px rgba(22,49,60,.06),0 12px 32px -18px rgba(22,49,60,.35);
+  --radius:14px;
+  --step:1;
+}
+:root:not([data-theme="light"]){ color-scheme:light }
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#071230; --surface:#0D1D42; --surface-2:#112450;
+    --ink:#E9F0F8; --muted:#9FB2C9; --line:#1E3565; --line-strong:#2B4780;
+    --navy:#5B82E0; --teal:#14A6A1; --blue:#4FA3DE; --green:#2CC5AE;
+    --accent:#5B82E0; --accent-ink:color-mix(in srgb,var(--accent) 72%,var(--ink)); --on-navy:#07142F;
+    --danger:#F0947C; --danger-soft:#3A1A14;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 18px 44px -22px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#071230; --surface:#0D1D42; --surface-2:#112450;
+  --ink:#E9F0F8; --muted:#9FB2C9; --line:#1E3565; --line-strong:#2B4780;
+  --navy:#5B82E0; --teal:#14A6A1; --blue:#4FA3DE; --green:#2CC5AE;
+  --accent:#5B82E0; --accent-ink:color-mix(in srgb,var(--accent) 72%,var(--ink)); --on-navy:#07142F;
+  --danger:#F0947C; --danger-soft:#3A1A14;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 18px 44px -22px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;
+  font-size:15.5px;line-height:1.75;direction:rtl;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.kufi{font-family:"Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;text-wrap:balance}
+button,input,select,textarea{font:inherit;color:inherit}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend{padding:0}
+:where(a,button,input,textarea,[tabindex]):focus-visible{outline:2.5px solid var(--blue);outline-offset:3px;border-radius:6px}
+
+/* ---------- shell ---------- */
+.shell{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+@media (max-width:980px){.shell{grid-template-columns:1fr}}
+
+/* ---------- identity panel ---------- */
+.panel{
+  position:relative;overflow:hidden;color:#fff;
+  background:linear-gradient(205deg,#16337A 0%,#10527A 52%,#00706E 100%);
+  padding:clamp(28px,4vw,56px);display:flex;flex-direction:column;gap:38px;
+}
+.panel canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.panel > *{position:relative;z-index:1}
+.lockup{display:flex;align-items:center;gap:14px}
+.lockup svg{width:54px;height:60px;flex:none}
+.lockup b{display:block;font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-weight:700;font-size:17px;line-height:1.25;letter-spacing:-.01em}
+.lockup small{display:block;font-size:9.5px;letter-spacing:.22em;font-weight:600;opacity:.82;direction:ltr;text-align:right;margin-top:3px}
+.panel__title{margin:0;font-size:clamp(28px,3.4vw,44px);font-weight:900;line-height:1.3;letter-spacing:-.02em}
+.panel__lede{margin:14px 0 0;max-width:34ch;font-size:16px;color:rgba(255,255,255,.84)}
+.panel__body{margin-top:auto;display:flex;flex-direction:column;gap:30px}
+.rail{display:flex;flex-direction:column;gap:2px;list-style:none;margin:0;padding:0}
+.rail li{display:flex;align-items:center;gap:14px;padding:11px 0;opacity:.45;transition:opacity .45s ease}
+.rail li[data-on]{opacity:1}
+.rail .bullet{
+  width:26px;height:26px;border-radius:50%;flex:none;position:relative;
+  border:1.5px solid rgba(255,255,255,.55);display:grid;place-items:center;
+  font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;transition:.45s ease;
+}
+.rail li[data-on] .bullet{background:#fff;color:#123063;border-color:#fff}
+.rail li[data-done] .bullet{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.9);color:#fff}
+.rail .bullet i{font-style:normal}
+.rail .bullet svg{width:13px;height:13px;display:none}
+.rail li[data-done] .bullet svg{display:block}
+.rail li[data-done] .bullet i{display:none}
+.rail .name{font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-size:14.5px;font-weight:500}
+.panel__foot{font-size:12.5px;color:rgba(255,255,255,.62);border-top:1px solid rgba(255,255,255,.16);padding-top:18px;display:flex;flex-wrap:wrap;gap:6px 18px}
+.panel__foot span{direction:ltr}
+@media (max-width:980px){
+  .panel{padding:22px 20px 26px;gap:22px}
+  .panel__body{margin-top:0}
+  .rail{flex-direction:row;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+  .rail li{flex:none;padding:0 12px 0 0}
+  .rail .name{display:none}
+  .panel__foot{display:none}
+}
+
+/* ---------- form column ---------- */
+.form-col{padding:clamp(24px,3.4vw,56px) clamp(18px,3.4vw,64px);display:flex;flex-direction:column;justify-content:safe center;background:var(--ground)}
+.card{
+  width:min(640px,100%);margin:0 auto;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.card__head{padding:22px clamp(20px,3vw,36px) 0;display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.eyebrow{display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:var(--accent-ink);text-transform:uppercase}
+.eyebrow::before{content:"";width:22px;height:2px;border-radius:2px;background:var(--accent)}
+.arcs{width:60px;height:60px;flex:none}
+.arcs circle{fill:none;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.15,1),stroke .4s}
+.card__title{margin:10px 0 0;padding:0 clamp(20px,3vw,36px);font-size:clamp(21px,2.4vw,27px);font-weight:700;letter-spacing:-.02em}
+.card__note{margin:8px 0 0;padding:0 clamp(20px,3vw,36px);color:var(--muted);font-size:14px;max-width:48ch}
+.card__body{padding:clamp(20px,3vw,30px) clamp(20px,3vw,36px)}
+.card__foot{
+  display:flex;align-items:center;gap:12px;padding:16px clamp(20px,3vw,36px);
+  border-top:1px solid var(--line);background:var(--surface-2);
+}
+.card__foot .spacer{flex:1}
+.count{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ---------- fields ---------- */
+.fields{display:flex;flex-direction:column;gap:20px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field__label{font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-size:14px;font-weight:500;line-height:1.6}
+.req{color:var(--danger);font-weight:700;margin-inline-start:2px}
+.hint{font-size:12.5px;color:var(--muted);font-weight:400;font-family:"IBM Plex Sans Arabic",sans-serif}
+.input,textarea.input{
+  width:100%;background:var(--surface);border:1.5px solid var(--line-strong);
+  border-radius:10px;padding:11px 13px;transition:border-color .2s,box-shadow .2s,background .2s;
+}
+textarea.input{resize:vertical;min-height:96px;line-height:1.7}
+.input::placeholder{color:var(--muted);opacity:.7}
+.input:hover{border-color:var(--accent)}
+.input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3.5px color-mix(in srgb,var(--blue) 22%,transparent)}
+.input[dir="ltr"]{direction:ltr;text-align:left;font-variant-numeric:tabular-nums}
+.field.is-bad .input{border-color:var(--danger);background:var(--danger-soft)}
+.err{display:none;font-size:12.5px;color:var(--danger);font-weight:500;align-items:center;gap:6px}
+.field.is-bad .err,.group.is-bad .err{display:flex;animation:shake .4s ease}
+.err::before{content:"!";display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--danger);color:var(--surface);font-size:10px;font-weight:700;flex:none}
+
+/* ---------- options ---------- */
+.group{display:flex;flex-direction:column;gap:11px}
+.opts{display:grid;gap:9px}
+.opts[data-cols="3"]{grid-template-columns:repeat(3,1fr)}
+@media (max-width:560px){.opts[data-cols="3"]{grid-template-columns:1fr}}
+.opt{
+  position:relative;display:flex;align-items:center;gap:11px;cursor:pointer;
+  padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;
+  background:var(--surface);transition:border-color .2s,background .2s,transform .18s;
+  overflow:hidden;
+}
+.opt::after{
+  content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--accent) 13%,transparent);opacity:0;
+  transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.4,0,.15,1),opacity .3s;
+}
+.opt:hover{border-color:var(--accent);transform:translateY(-1px)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .box{
+  width:19px;height:19px;flex:none;border:1.8px solid var(--line-strong);
+  background:var(--surface);transition:.22s ease;display:grid;place-items:center;position:relative;z-index:1;
+}
+.opt[data-type="radio"] .box{border-radius:50%}
+.opt[data-type="check"] .box{border-radius:6px}
+.opt .box::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--surface);transform:scale(0);transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
+.opt[data-type="check"] .box::after{
+  width:10px;height:5.5px;border-radius:0;background:none;
+  border-left:2.2px solid var(--surface);border-bottom:2.2px solid var(--surface);
+  transform:rotate(-45deg) scale(0);margin-bottom:2px;
+}
+.opt .txt{position:relative;z-index:1;font-size:14.5px;transition:color .25s}
+.opt:has(input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.opt:has(input:checked)::after{opacity:1;transform:scaleX(1)}
+.opt:has(input:checked) .box{background:var(--accent);border-color:var(--accent)}
+.opt:has(input:checked) .box::after{background:var(--surface);transform:scale(1)}
+.opt[data-type="check"]:has(input:checked) .box::after{background:none;border-color:var(--surface);transform:rotate(-45deg) scale(1)}
+.opt:has(input:checked) .txt{color:var(--accent-ink);font-weight:600}
+.opt input:focus-visible ~ .txt{text-decoration:underline;text-underline-offset:3px}
+.group.is-bad .opt{border-color:color-mix(in srgb,var(--danger) 55%,var(--line))}
+.other{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .35s ease,opacity .3s ease}
+.other.is-open{grid-template-rows:1fr;opacity:1}
+.other > div{overflow:hidden}
+.other input{margin-top:9px}
+
+/* ---------- buttons ---------- */
+.btn{
+  position:relative;border:1.5px solid transparent;border-radius:10px;padding:11px 22px;
+  font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-weight:700;font-size:14.5px;
+  cursor:pointer;transition:transform .16s,box-shadow .2s,background .2s,color .2s;overflow:hidden;
+}
+.btn:active{transform:translateY(1px)}
+.btn--primary{background:var(--navy);color:var(--on-navy)}
+.btn--primary::before{
+  content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--teal),var(--blue));
+  opacity:0;transition:opacity .3s;
+}
+.btn--primary:hover::before{opacity:1}
+.btn--primary span{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px}
+.btn--ghost{background:transparent;color:var(--muted);border-color:var(--line-strong)}
+.btn--ghost:hover{color:var(--ink);border-color:var(--ink)}
+.btn--text{background:none;color:var(--muted);padding:11px 8px;font-size:13px;font-weight:500;font-family:inherit}
+.btn--text:hover{color:var(--danger)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+
+/* ---------- steps + motion ---------- */
+.step{display:none}
+.step.is-live{display:block}
+.step.is-live .anim{animation:rise .5s cubic-bezier(.22,.7,.3,1) backwards;animation-delay:calc(var(--i,0) * 70ms + 60ms)}
+.step.is-out{display:block;animation:fall .22s ease forwards;pointer-events:none}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes fall{to{opacity:0;transform:translateY(-10px)}}
+@keyframes shake{25%{transform:translateX(4px)}50%{transform:translateX(-4px)}75%{transform:translateX(2px)}}
+@keyframes draw{to{stroke-dashoffset:0}}
+.mark path{stroke-dasharray:var(--len,140);stroke-dashoffset:var(--len,140);animation:draw 1.1s cubic-bezier(.4,0,.2,1) forwards}
+.mark path:nth-child(2){animation-delay:.1s}.mark path:nth-child(3){animation-delay:.2s}
+.mark path:nth-child(4){animation-delay:.3s}.mark path:nth-child(5){animation-delay:.4s}
+.fade-up{animation:rise .7s cubic-bezier(.22,.7,.3,1) backwards}
+.d1{animation-delay:.12s}.d2{animation-delay:.24s}.d3{animation-delay:.36s}
+
+.notice{
+  margin:0 clamp(20px,3vw,36px) 18px;padding:11px 14px;border-radius:10px;
+  background:var(--danger-soft);border:1.5px solid color-mix(in srgb,var(--danger) 45%,transparent);
+  color:var(--danger);font-size:13px;font-weight:500;animation:rise .35s ease;
+}
+
+/* ---------- credit + contact ---------- */
+.credit{
+  width:min(640px,100%);margin:18px auto 0;display:flex;align-items:center;
+  flex-wrap:wrap;gap:8px 14px;font-size:12.5px;color:var(--muted);
+  animation:rise .7s cubic-bezier(.22,.7,.3,1) backwards;animation-delay:.5s;
+}
+.credit p{margin:0;display:flex;align-items:center;gap:6px}
+.credit b{font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-weight:500;color:var(--ink)}
+.credit .dot{width:4px;height:4px;border-radius:50%;background:var(--line-strong);flex:none}
+.credit .spacer{flex:1}
+.contact{
+  position:relative;display:inline-flex;align-items:center;gap:9px;text-decoration:none;
+  padding:7px 8px 7px 14px;border:1.5px solid var(--line-strong);border-radius:999px;
+  color:var(--ink);font-size:12.5px;font-weight:600;
+  transition:border-color .25s,background .25s,transform .2s;
+}
+.contact:hover,.contact:focus-visible{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 10%,transparent);transform:translateY(-1px)}
+.contact__icon{
+  position:relative;width:26px;height:26px;flex:none;border-radius:50%;
+  background:var(--teal);display:grid;place-items:center;
+}
+.contact__icon svg{width:15px;height:15px;fill:var(--surface)}
+.contact__icon::after{
+  content:"";position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--teal);
+  animation:ping 2.6s cubic-bezier(.3,0,.2,1) infinite;
+}
+@keyframes ping{0%{transform:scale(1);opacity:.7}70%,100%{transform:scale(1.85);opacity:0}}
+.contact__num{
+  display:grid;grid-template-columns:0fr;opacity:0;
+  transition:grid-template-columns .42s cubic-bezier(.4,0,.15,1),opacity .3s;
+}
+.contact__num i{overflow:hidden;white-space:nowrap;font-style:normal;direction:ltr;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.contact:hover .contact__num,.contact:focus-visible .contact__num{grid-template-columns:1fr;opacity:1}
+@media (max-width:560px){
+  .contact__num{grid-template-columns:1fr;opacity:1}
+  .credit{justify-content:center;text-align:center}
+  .credit .spacer{display:none}
+}
+
+/* ---------- done ---------- */
+.card.is-done .card__title,.card.is-done .card__note{display:none}
+.done{text-align:center;padding:14px 0 6px}
+.done svg{width:88px;height:88px;margin-bottom:6px}
+.done h2{margin:0 0 10px;font-size:26px;font-weight:900}
+.done p{margin:0 auto;max-width:42ch;color:var(--muted)}
+.summary{
+  margin-top:24px;text-align:start;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface-2);max-height:260px;overflow:auto;
+}
+.summary dl{margin:0;padding:4px 0}
+.summary div{display:flex;gap:14px;padding:9px 16px;border-bottom:1px solid var(--line);font-size:13.5px}
+.summary div:last-child{border-bottom:0}
+.summary dt{flex:0 0 42%;color:var(--muted);margin:0}
+.summary dd{margin:0;flex:1;font-weight:500}
+.done__actions{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+
+<div class="shell">
+  <!-- ======= identity panel ======= -->
+  <aside class="panel">
+    <canvas id="arcs-bg" aria-hidden="true"></canvas>
+
+    <div class="lockup fade-up">
+      <svg class="mark" viewBox="0 0 92 104" fill="none" aria-hidden="true">
+        <path style="--len:150" d="M46 100V56" stroke="#0FB39B" stroke-width="9" stroke-linecap="round"/>
+        <path style="--len:150" d="M12 76a34 34 0 0 1 68 0" stroke="#2C5BD6" stroke-width="9" stroke-linecap="round"/>
+        <path style="--len:120" d="M48 54a30 30 0 0 1 34-20" stroke="#0FB39B" stroke-width="9" stroke-linecap="round"/>
+        <path style="--len:120" d="M44 54a30 30 0 0 0-32-18" stroke="#57A7E6" stroke-width="9" stroke-linecap="round"/>
+        <path style="--len:110" d="M46 52a26 26 0 0 1 18-38" stroke="#20C9AE" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <b>المسؤولية<br>الاجتماعية</b>
+        <small>SOCIAL RESPONSIBILITY</small>
+      </div>
+    </div>
+
+    <div>
+      <h1 class="panel__title fade-up d1">نموذج حصر المنشآت<br>وفرص الشراكة</h1>
+      <p class="panel__lede fade-up d2">نتعرّف على مجالات اهتمام منشأتكم وإمكاناتها في المسؤولية الاجتماعية، لبناء شراكات فاعلة وتوجيه فرص التعاون نحو الأولويات التنموية والفئات المستهدفة.</p>
+    </div>
+
+    <div class="panel__body fade-up d3">
+      <ul class="rail" id="rail">
+        <li data-step="1"><span class="bullet"><i>١</i><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">بيانات المنشأة</span></li>
+        <li data-step="2"><span class="bullet"><i>٢</i><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">مجالات الاهتمام</span></li>
+        <li data-step="3"><span class="bullet"><i>٣</i><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">فرص الشراكة</span></li>
+        <li data-step="4"><span class="bullet"><i>٤</i><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">التواصل والمتابعة</span></li>
+      </ul>
+      <div class="panel__foot">
+        <span>csr.gov.sa</span><span>info@csr.gov.sa</span><span>T. +966 11 217 6040</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ======= form ======= -->
+  <main class="form-col">
+    <form class="card" id="form" novalidate>
+      <div class="card__head">
+        <div>
+          <p class="eyebrow" id="eyebrow">الخطوة ١ من ٤</p>
+        </div>
+        <svg class="arcs" id="arcs" viewBox="0 0 60 60" aria-hidden="true">
+          <circle cx="30" cy="30" r="26" stroke="var(--line)" stroke-width="3.2"/>
+          <circle cx="30" cy="30" r="26" stroke="var(--navy)" stroke-width="3.2" class="ring" data-ring="1" data-len="163.4" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+          <circle cx="30" cy="30" r="19.5" stroke="var(--line)" stroke-width="3.2"/>
+          <circle cx="30" cy="30" r="19.5" stroke="var(--green)" stroke-width="3.2" class="ring" data-ring="2" data-len="122.5" stroke-dasharray="122.5" stroke-dashoffset="122.5"/>
+          <circle cx="30" cy="30" r="13" stroke="var(--line)" stroke-width="3.2"/>
+          <circle cx="30" cy="30" r="13" stroke="var(--teal)" stroke-width="3.2" class="ring" data-ring="3" data-len="81.7" stroke-dasharray="81.7" stroke-dashoffset="81.7"/>
+          <circle cx="30" cy="30" r="6.5" stroke="var(--line)" stroke-width="3.2"/>
+          <circle cx="30" cy="30" r="6.5" stroke="var(--blue)" stroke-width="3.2" class="ring" data-ring="4" data-len="40.8" stroke-dasharray="40.8" stroke-dashoffset="40.8"/>
+        </svg>
+      </div>
+      <h2 class="card__title" id="card-title">بيانات المنشأة</h2>
+      <p class="card__note" id="card-note">تُستخدم هذه البيانات لأغراض الحصر والتواصل ودراسة فرص الشراكة.</p>
+
+      <div class="card__body">
+        <!-- step 1 -->
+        <section class="step is-live" data-step="1" aria-label="بيانات المنشأة">
+          <div class="fields">
+            <label class="field anim" style="--i:0">
+              <span class="field__label">اسم المنشأة <b class="req">*</b></span>
+              <input class="input" name="اسم المنشأة" required autocomplete="organization" placeholder="الاسم كما هو في السجل التجاري">
+              <span class="err"></span>
+            </label>
+            <label class="field anim" style="--i:1">
+              <span class="field__label">اسم مسؤول التواصل <b class="req">*</b></span>
+              <input class="input" name="اسم مسؤول التواصل" required autocomplete="name">
+              <span class="err"></span>
+            </label>
+            <label class="field anim" style="--i:2">
+              <span class="field__label">المسمى الوظيفي <b class="req">*</b></span>
+              <input class="input" name="المسمى الوظيفي" required autocomplete="organization-title">
+              <span class="err"></span>
+            </label>
+            <label class="field anim" style="--i:3">
+              <span class="field__label">البريد الإلكتروني <b class="req">*</b></span>
+              <input class="input" dir="ltr" type="email" name="البريد الإلكتروني" required autocomplete="email" placeholder="name@company.com">
+              <span class="err"></span>
+            </label>
+            <label class="field anim" style="--i:4">
+              <span class="field__label">رقم التواصل <b class="req">*</b> <span class="hint">— جوال سعودي يبدأ بـ 05</span></span>
+              <input class="input" dir="ltr" type="tel" name="رقم التواصل" required inputmode="numeric" autocomplete="tel" placeholder="05XXXXXXXX">
+              <span class="err"></span>
+            </label>
+          </div>
+        </section>
+
+        <!-- step 2 -->
+        <section class="step" data-step="2" aria-label="مجالات الاهتمام" hidden>
+          <div class="fields">
+            <fieldset class="group anim" style="--i:0" data-required="radio">
+              <legend class="field__label">هل لدى المنشأة برامج أو مبادرات في مجال المسؤولية الاجتماعية؟ <b class="req">*</b></legend>
+              <div class="opts" data-cols="3">
+                <label class="opt" data-type="radio"><input type="radio" name="وجود برامج للمسؤولية الاجتماعية" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="وجود برامج للمسؤولية الاجتماعية" value="لا"><span class="box"></span><span class="txt">لا</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="وجود برامج للمسؤولية الاجتماعية" value="قيد التطوير"><span class="box"></span><span class="txt">قيد التطوير</span></label>
+              </div>
+              <span class="err"></span>
+            </fieldset>
+
+            <fieldset class="group anim" style="--i:1">
+              <legend class="field__label">ما الفئات المستهدفة التي تهتم المنشأة بدعمها؟ <span class="hint">— يمكن اختيار أكثر من فئة</span></legend>
+              <div class="opts">
+                <label class="opt" data-type="check"><input type="checkbox" name="الفئات المستهدفة" value="الأيتام والأيتام ذوو الظروف الخاصة"><span class="box"></span><span class="txt">الأيتام والأيتام ذوو الظروف الخاصة</span></label>
+                <label class="opt" data-type="check"><input type="checkbox" name="الفئات المستهدفة" value="الأشخاص ذوو الإعاقة"><span class="box"></span><span class="txt">الأشخاص ذوو الإعاقة</span></label>
+                <label class="opt" data-type="check"><input type="checkbox" name="الفئات المستهدفة" value="اضطرابات التوحد وطيف التوحد"><span class="box"></span><span class="txt">اضطرابات التوحد وطيف التوحد</span></label>
+                <label class="opt" data-type="check"><input type="checkbox" name="الفئات المستهدفة" value="الفئات الأشد حاجة"><span class="box"></span><span class="txt">الفئات الأشد حاجة</span></label>
+                <label class="opt" data-type="check"><input type="checkbox" name="الفئات المستهدفة" value="طلاب وطالبات المدارس"><span class="box"></span><span class="txt">طلاب وطالبات المدارس</span></label>
+                <label class="opt" data-type="check"><input type="checkbox" name="الفئات المستهدفة" value="الباحثون عن العمل"><span class="box"></span><span class="txt">الباحثون عن العمل</span></label>
+                <label class="opt" data-type="check" data-other><input type="checkbox" name="الفئات المستهدفة" value="أخرى"><span class="box"></span><span class="txt">أخرى</span></label>
+              </div>
+              <div class="other"><div><input class="input" name="فئات أخرى" placeholder="اذكر الفئة"></div></div>
+            </fieldset>
+          </div>
+        </section>
+
+        <!-- step 3 -->
+        <section class="step" data-step="3" aria-label="فرص الشراكة" hidden>
+          <div class="fields">
+            <fieldset class="group anim" style="--i:0" data-required="check">
+              <legend class="field__label">ما نوع المساهمة التي يمكن للمنشأة تقديمها؟ <b class="req">*</b> <span class="hint">— يمكن اختيار أكثر من نوع</span></legend>
+              <div class="opts">
+                <label class="opt" data-type="check"><input type="checkbox" name="نوع المساهمة" value="دعم مالي"><span class="box"></span><span class="txt">دعم مالي</span></label>
+                <label class="opt" data-type="check"><input type="checkbox" name="نوع المساهمة" value="دعم عيني"><span class="box"></span><span class="txt">دعم عيني</span></label>
+                <label class="opt" data-type="check"><input type="checkbox" name="نوع المساهمة" value="رعاية المبادرات والفعاليات"><span class="box"></span><span class="txt">رعاية المبادرات والفعاليات</span></label>
+                <label class="opt" data-type="check" data-other><input type="checkbox" name="نوع المساهمة" value="أخرى"><span class="box"></span><span class="txt">أخرى</span></label>
+              </div>
+              <div class="other"><div><input class="input" name="مساهمة أخرى" placeholder="اذكر نوع المساهمة"></div></div>
+              <span class="err"></span>
+            </fieldset>
+
+            <fieldset class="group anim" style="--i:1" data-required="radio">
+              <legend class="field__label">هل لدى المنشأة مبادرة أو برنامج قائم يمكن التعاون بشأنه؟ <b class="req">*</b></legend>
+              <div class="opts" data-cols="3">
+                <label class="opt" data-type="radio"><input type="radio" name="مبادرة قائمة للتعاون" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="مبادرة قائمة للتعاون" value="لا"><span class="box"></span><span class="txt">لا</span></label>
+              </div>
+              <span class="err"></span>
+            </fieldset>
+          </div>
+        </section>
+
+        <!-- step 4 -->
+        <section class="step" data-step="4" aria-label="التواصل والمتابعة" hidden>
+          <div class="fields">
+            <fieldset class="group anim" style="--i:0" data-required="radio">
+              <legend class="field__label">هل تم تسجيلكم في المنصة الوطنية للمسؤولية الاجتماعية؟ <b class="req">*</b></legend>
+              <div class="opts" data-cols="3">
+                <label class="opt" data-type="radio"><input type="radio" name="التسجيل في المنصة الوطنية" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="التسجيل في المنصة الوطنية" value="لا"><span class="box"></span><span class="txt">لا</span></label>
+              </div>
+              <span class="err"></span>
+            </fieldset>
+
+            <fieldset class="group anim" style="--i:1" data-required="radio">
+              <legend class="field__label">هل ترغب المنشأة في التواصل والتنسيق بشأن التسجيل في الفرص الخاصة بمبادرات ومشاريع المسؤولية الاجتماعية؟ <b class="req">*</b></legend>
+              <div class="opts" data-cols="3">
+                <label class="opt" data-type="radio"><input type="radio" name="الرغبة في التنسيق حول الفرص" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="الرغبة في التنسيق حول الفرص" value="لا"><span class="box"></span><span class="txt">لا</span></label>
+                <label class="opt" data-type="radio" data-other><input type="radio" name="الرغبة في التنسيق حول الفرص" value="أخرى"><span class="box"></span><span class="txt">أخرى</span></label>
+              </div>
+              <div class="other"><div><input class="input" name="تفاصيل أخرى للتنسيق" placeholder="اكتب التفاصيل"></div></div>
+              <span class="err"></span>
+            </fieldset>
+
+            <fieldset class="group anim" style="--i:2" data-required="radio">
+              <legend class="field__label">هل ترغب المنشأة في تأسيس إدارة المسؤولية الاجتماعية ضمن استراتيجية المسؤولية الاجتماعية للشركات؟ <b class="req">*</b></legend>
+              <div class="opts" data-cols="3">
+                <label class="opt" data-type="radio"><input type="radio" name="تأسيس إدارة للمسؤولية الاجتماعية" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="تأسيس إدارة للمسؤولية الاجتماعية" value="لا"><span class="box"></span><span class="txt">لا</span></label>
+              </div>
+              <span class="err"></span>
+            </fieldset>
+
+            <fieldset class="group anim" style="--i:3" data-required="radio">
+              <legend class="field__label">هل تم تعيين مسؤول مختص بالمسؤولية الاجتماعية في المنشأة؟ <b class="req">*</b></legend>
+              <div class="opts" data-cols="3">
+                <label class="opt" data-type="radio"><input type="radio" name="تعيين مسؤول مختص" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="تعيين مسؤول مختص" value="لا"><span class="box"></span><span class="txt">لا</span></label>
+              </div>
+              <span class="err"></span>
+            </fieldset>
+
+            <label class="field anim" style="--i:4">
+              <span class="field__label">الملاحظات والمقترحات <span class="hint">— اختياري</span></span>
+              <textarea class="input" name="الملاحظات والمقترحات" rows="4" placeholder="ما الذي تودّون إضافته؟"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <!-- done -->
+        <section class="step" data-step="5" aria-label="تم الإرسال" hidden>
+          <div class="done">
+            <svg class="mark" viewBox="0 0 92 104" fill="none" aria-hidden="true">
+              <path style="--len:150" d="M46 100V56" stroke="var(--teal)" stroke-width="9" stroke-linecap="round"/>
+              <path style="--len:150" d="M12 76a34 34 0 0 1 68 0" stroke="var(--navy)" stroke-width="9" stroke-linecap="round"/>
+              <path style="--len:120" d="M48 54a30 30 0 0 1 34-20" stroke="var(--teal)" stroke-width="9" stroke-linecap="round"/>
+              <path style="--len:120" d="M44 54a30 30 0 0 0-32-18" stroke="var(--blue)" stroke-width="9" stroke-linecap="round"/>
+              <path style="--len:110" d="M46 52a26 26 0 0 1 18-38" stroke="var(--green)" stroke-width="9" stroke-linecap="round"/>
+            </svg>
+            <h2>وصلتنا إجابتكم</h2>
+            <p>شكرًا لمشاركتكم. سيتواصل فريق المسؤولية الاجتماعية مع مسؤول التواصل لديكم لاستكمال دراسة فرص الشراكة.</p>
+            <div class="summary" id="summary"><dl></dl></div>
+            <div class="done__actions">
+              <button type="button" class="btn btn--ghost" id="copy">نسخ ملخص الإجابة</button>
+              <button type="button" class="btn btn--ghost" id="again">تعبئة نموذج جديد</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <p class="notice" id="notice" hidden></p>
+
+      <div class="card__foot" id="foot">
+        <button type="button" class="btn btn--ghost" id="back" hidden>رجوع</button>
+        <span class="spacer"></span>
+        <span class="count" id="count"></span>
+        <button type="button" class="btn btn--text" id="clear">مسح النموذج</button>
+        <button type="button" class="btn btn--primary" id="next"><span id="next-label">التالي</span></button>
+      </div>
+    </form>
+
+    <footer class="credit">
+      <p>فكرة <b>إسماعيل صالح المطر</b></p>
+      <span class="dot"></span>
+      <p>تصميم وبرمجة <b>محمد إسماعيل المطر</b></p>
+      <span class="spacer"></span>
+      <a class="contact" href="https://wa.me/966554909663" target="_blank" rel="noopener" aria-label="تواصل مع محمد إسماعيل المطر على واتساب — 0554909663">
+        <span class="contact__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.02c-.24.68-1.4 1.3-1.95 1.34-.5.04-.98.22-3.3-.69-2.77-1.09-4.53-3.92-4.67-4.1-.14-.18-1.12-1.49-1.12-2.84s.71-2.02.96-2.29c.25-.28.55-.35.73-.35.18 0 .37 0 .53.01.17.01.4-.6.63.48.24.55.8 1.9.87 2.04.7.14.12.3.02.48-.09.18-.14.3-.28.46-.14.16-.29.36-.42.48-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.7.18-.18.69-.8.87-1.08.18-.28.37-.23.62-.14.25.09 1.6.75 1.87.89.28.14.46.21.53.32.07.12.07.66-.17 1.34z"/></svg>
+        </span>
+        <span>تواصل معي</span>
+        <span class="contact__num"><i>0554909663</i></span>
+      </a>
+    </footer>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   نموذج حصر المنشآت وفرص الشراكة — المسؤولية الاجتماعية
+   الربط بقاعدة بيانات Supabase:
+   1) شغّل ملف supabase-setup.sql مرة واحدة في SQL Editor
+      (ينشئ جدولًا جديدًا مستقلًا ولا يمسّ أي جدول قائم).
+   2) ضع المفتاح العام (anon public key) في SUPABASE_KEY أدناه.
+   ملاحظة: الإرسال يعمل عند استضافة الملف على دومينك،
+   ولا يعمل داخل معاينة Artifact لأنها تمنع الاتصال الخارجي.
+   ============================================================ */
+const SUPABASE_URL = "https://akawkmoygfhdmzcoqfly.supabase.co";
+const SUPABASE_KEY = ""; // ← المفتاح العام anon
+const SUPABASE_TABLE = "csr_partnership_responses";
+
+const form   = document.getElementById('form');
+const steps  = [...form.querySelectorAll('.step')];
+const rail   = [...document.querySelectorAll('#rail li')];
+const rings  = [...form.querySelectorAll('.ring')];
+const elTitle= document.getElementById('card-title');
+const elNote = document.getElementById('card-note');
+const elEye  = document.getElementById('eyebrow');
+const elCount= document.getElementById('count');
+const btnNext= document.getElementById('next');
+const btnBack= document.getElementById('back');
+const btnClear=document.getElementById('clear');
+const lblNext= document.getElementById('next-label');
+const LAST = 4;
+
+const META = [
+  {t:'بيانات المنشأة',     n:'تُستخدم هذه البيانات لأغراض الحصر والتواصل ودراسة فرص الشراكة.', a:'var(--navy)'},
+  {t:'مجالات الاهتمام',    n:'ما الذي تعمل عليه منشأتكم اليوم، ومن الفئات التي تودّون الوصول إليها.', a:'var(--green)'},
+  {t:'فرص الشراكة',        n:'نوع المساهمة التي تقدرون عليها، والبرامج القائمة التي يمكن البناء عليها.', a:'var(--teal)'},
+  {t:'التواصل والمتابعة',  n:'خطوات التسجيل والتنسيق، وحوكمة المسؤولية الاجتماعية داخل المنشأة.', a:'var(--blue)'}
+];
+const AR = n => n.toLocaleString('ar-EG');
+let step = 1, sent = false;
+
+/* ---------- required-field bookkeeping ---------- */
+const required = s => [
+  ...steps[s-1].querySelectorAll('.field > .input[required]'),
+  ...steps[s-1].querySelectorAll('.group[data-required]')
+];
+const filled = el => {
+  if (el.classList.contains('group')) return !!el.querySelector('input:checked');
+  return el.value.trim() !== '' && checkValue(el) === '';
+};
+function checkValue(input){
+  const v = input.value.trim();
+  if (!v) return 'هذا الحقل مطلوب.';
+  if (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v))
+    return 'أدخل بريدًا إلكترونيًا صحيحًا، مثل name@company.com';
+  if (input.type === 'tel' && !/^(?:\+?966|00966|0)?5\d{8}$/.test(v.replace(/[\s-]/g,'')))
+    return 'أدخل رقم جوال سعودي من عشرة أرقام يبدأ بـ 05';
+  return '';
+}
+function progress(s){
+  const req = required(s);
+  if (!req.length) return 1;
+  return req.filter(filled).length / req.length;
+}
+
+/* ---------- validation ---------- */
+function validate(s, show){
+  let ok = true, first = null;
+  required(s).forEach(el => {
+    const box = el.classList.contains('group') ? el : el.closest('.field');
+    const err = box.querySelector('.err');
+    let msg = '';
+    if (el.classList.contains('group')){
+      if (!el.querySelector('input:checked'))
+        msg = el.dataset.required === 'check' ? 'اختر خيارًا واحدًا على الأقل.' : 'اختر أحد الخيارات.';
+    } else {
+      msg = checkValue(el);
+    }
+    if (msg){
+      ok = false; first = first || box;
+      if (show){ box.classList.add('is-bad'); if (err) err.textContent = msg; }
+    } else box.classList.remove('is-bad');
+  });
+  if (show && first) first.scrollIntoView({block:'center', behavior:'smooth'});
+  return ok;
+}
+
+/* ---------- rendering ---------- */
+function paint(){
+  const done = step > LAST;
+  rings.forEach((r,i) => {
+    const len = +r.dataset.len;
+    const p = done ? 1 : (i+1 < step ? 1 : i+1 === step ? progress(step) : 0);
+    r.style.strokeDashoffset = len * (1 - p);
+  });
+  rail.forEach((li,i) => {
+    li.toggleAttribute('data-on',  !done && i+1 === step);
+    li.toggleAttribute('data-done', done || i+1 < step);
+  });
+  if (done) return;
+  const req = required(step), got = req.filter(filled).length;
+  elCount.textContent = req.length ? `اكتمل ${AR(got)} من ${AR(req.length)}` : '';
+}
+function show(next){
+  const from = steps[step-1], to = steps[next-1];
+  from.classList.remove('is-live'); from.classList.add('is-out');
+  setTimeout(() => { from.classList.remove('is-out'); from.hidden = true; }, 200);
+  setTimeout(() => {
+    to.hidden = false; to.classList.add('is-live');
+    step = next;
+    const m = META[step-1];
+    if (m){
+      document.documentElement.style.setProperty('--accent', m.a);
+      elTitle.textContent = m.t; elNote.textContent = m.n;
+      elEye.textContent = `الخطوة ${AR(step)} من ${AR(LAST)}`;
+      lblNext.textContent = step === LAST ? 'إرسال النموذج' : 'التالي';
+      btnBack.hidden = step === 1;
+      document.getElementById('foot').style.display = '';
+    } else {
+      form.classList.add('is-done');
+      elEye.textContent = 'اكتمل النموذج';
+      document.getElementById('foot').style.display = 'none';
+    }
+    paint();
+    form.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }, 200);
+}
+
+/* ---------- navigation ---------- */
+btnNext.addEventListener('click', () => {
+  if (!validate(step, true)) return;
+  if (step === LAST) submit(); else show(step + 1);
+});
+btnBack.addEventListener('click', () => { if (step > 1) show(step - 1); });
+form.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && step <= LAST){ e.preventDefault(); btnNext.click(); }
+});
+
+/* ---------- live feedback + "أخرى" reveal + draft ---------- */
+form.addEventListener('input', e => {
+  const box = e.target.closest('.field, .group');
+  if (box && box.classList.contains('is-bad')) validate(step, true);
+  paint(); save();
+});
+form.addEventListener('change', e => {
+  const opt = e.target.closest('.opt');
+  if (opt){
+    const group = opt.closest('.group');
+    const other = group && group.querySelector('.other');
+    if (other){
+      const on = !!group.querySelector('.opt[data-other] input:checked');
+      other.classList.toggle('is-open', on);
+      if (on) setTimeout(() => other.querySelector('input').focus(), 260);
+      else other.querySelector('input').value = '';
+    }
+  }
+  paint(); save();
+});
+
+/* ---------- draft (per viewer, this browser only) ---------- */
+const KEY = 'csr-survey-draft';
+function save(){
+  try{
+    const d = {};
+    new FormData(form).forEach((v,k) => { d[k] = d[k] ? [].concat(d[k], v) : v; });
+    localStorage.setItem(KEY, JSON.stringify(d));
+  }catch(e){}
+}
+function restore(){
+  try{
+    const d = JSON.parse(localStorage.getItem(KEY) || '{}');
+    Object.entries(d).forEach(([k,v]) => {
+      const vals = [].concat(v);
+      form.querySelectorAll(`[name="${CSS.escape(k)}"]`).forEach(el => {
+        if (el.type === 'checkbox' || el.type === 'radio') el.checked = vals.includes(el.value);
+        else el.value = vals[0] || '';
+      });
+    });
+    form.querySelectorAll('.group').forEach(g => {
+      const other = g.querySelector('.other');
+      if (other && g.querySelector('.opt[data-other] input:checked')) other.classList.add('is-open');
+    });
+  }catch(e){}
+}
+btnClear.addEventListener('click', () => {
+  if (!confirm('سيتم مسح كل ما أدخلته في النموذج. هل تريد المتابعة؟')) return;
+  form.reset();
+  form.querySelectorAll('.is-open').forEach(o => o.classList.remove('is-open'));
+  form.querySelectorAll('.is-bad').forEach(o => o.classList.remove('is-bad'));
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  paint();
+});
+
+/* ---------- submit ---------- */
+function collect(){
+  const out = {};
+  new FormData(form).forEach((v,k) => {
+    v = String(v).trim(); if (!v) return;
+    out[k] = out[k] ? [].concat(out[k], v) : v;
+  });
+  return out;
+}
+function toRow(d){
+  const one = k => (d[k] ? [].concat(d[k])[0] : null);
+  const many = k => (d[k] ? [].concat(d[k]) : []);
+  return {
+    org_name:            one('اسم المنشأة'),
+    contact_name:        one('اسم مسؤول التواصل'),
+    job_title:           one('المسمى الوظيفي'),
+    email:               one('البريد الإلكتروني'),
+    phone:               one('رقم التواصل'),
+    has_programs:        one('وجود برامج للمسؤولية الاجتماعية'),
+    target_groups:       many('الفئات المستهدفة'),
+    target_groups_other: one('فئات أخرى'),
+    contribution_types:  many('نوع المساهمة'),
+    contribution_other:  one('مساهمة أخرى'),
+    existing_initiative: one('مبادرة قائمة للتعاون'),
+    registered_platform: one('التسجيل في المنصة الوطنية'),
+    wants_coordination:  one('الرغبة في التنسيق حول الفرص'),
+    coordination_other:  one('تفاصيل أخرى للتنسيق'),
+    wants_department:    one('تأسيس إدارة للمسؤولية الاجتماعية'),
+    has_officer:         one('تعيين مسؤول مختص'),
+    notes:               one('الملاحظات والمقترحات'),
+    payload:             d
+  };
+}
+async function send(data){
+  if (!SUPABASE_KEY){
+    console.warn('لم يُضبط SUPABASE_KEY — النموذج في وضع المعاينة ولم تُحفظ الإجابة.');
+    return {ok:true, preview:true};
+  }
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
+      method:'POST',
+      headers:{
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(toRow(data))
+    });
+    if (!res.ok) return {ok:false, msg:`رفض الخادم الحفظ (${res.status}). ${await res.text()}`};
+    return {ok:true};
+  }catch(err){
+    return {ok:false, msg:'تعذّر الاتصال بالخادم. تحقق من الاتصال بالإنترنت وحاول مرة أخرى.'};
+  }
+}
+async function submit(){
+  if (sent) return;
+  const notice = document.getElementById('notice');
+  const data = collect();
+  data['تاريخ الإرسال'] = new Date().toLocaleString('ar-SA');
+  btnNext.disabled = true; lblNext.textContent = 'جارٍ الإرسال…'; notice.hidden = true;
+
+  const out = await send(data);
+  if (!out.ok){
+    btnNext.disabled = false; lblNext.textContent = 'إعادة المحاولة';
+    notice.hidden = false;
+    notice.textContent = out.msg + ' — إجاباتك محفوظة في هذا المتصفح ولن تضيع.';
+    console.error(out.msg);
+    return;
+  }
+  sent = true;
+  renderSummary(data);
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  show(5);
+}
+let summaryText = '';
+function renderSummary(data){
+  const dl = document.querySelector('#summary dl');
+  dl.innerHTML = '';
+  summaryText = Object.entries(data).map(([k,v]) => `${k}: ${[].concat(v).join('، ')}`).join('\n');
+  Object.entries(data).forEach(([k,v]) => {
+    const row = document.createElement('div');
+    row.innerHTML = `<dt></dt><dd></dd>`;
+    row.querySelector('dt').textContent = k;
+    row.querySelector('dd').textContent = [].concat(v).join('، ');
+    dl.appendChild(row);
+  });
+}
+document.getElementById('copy').addEventListener('click', async e => {
+  try{ await navigator.clipboard.writeText(summaryText); e.target.textContent = 'تم نسخ الملخص'; }
+  catch(err){ e.target.textContent = 'تعذّر النسخ — حدّد النص يدويًا'; }
+  setTimeout(() => e.target.textContent = 'نسخ ملخص الإجابة', 2200);
+});
+document.getElementById('again').addEventListener('click', () => {
+  form.reset(); sent = false; btnNext.disabled = false;
+  document.getElementById('notice').hidden = true;
+  form.querySelectorAll('.is-open,.is-bad').forEach(o => o.classList.remove('is-open','is-bad'));
+  steps[4].hidden = true; steps[4].classList.remove('is-live');
+  steps[0].hidden = false; steps[0].classList.add('is-live');
+  step = 1; const m = META[0];
+  document.documentElement.style.setProperty('--accent', m.a);
+  form.classList.remove('is-done');
+  elTitle.textContent = m.t; elNote.textContent = m.n;
+  elEye.textContent = `الخطوة ${AR(1)} من ${AR(LAST)}`;
+  lblNext.textContent = 'التالي'; btnBack.hidden = true;
+  document.getElementById('foot').style.display = '';
+  paint();
+});
+
+/* ---------- ambient arcs (identity motif) ---------- */
+(function arcsBg(){
+  const cv = document.getElementById('arcs-bg'), ctx = cv.getContext('2d');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w, h, dpr, t = 0;
+  const arcs = Array.from({length:9}, (_, i) => ({
+    r: .18 + i * .12, a: Math.random() * Math.PI * 2,
+    span: .7 + Math.random() * 1.5, v: (i % 2 ? 1 : -1) * (.00012 + Math.random() * .0002),
+    w: i % 3 === 0 ? 2.4 : 1.1, o: .10 + Math.random() * .22
+  }));
+  function size(){
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    w = cv.clientWidth; h = cv.clientHeight;
+    cv.width = w * dpr; cv.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function draw(){
+    ctx.clearRect(0, 0, w, h);
+    const cx = w * .12, cy = h * .82, unit = Math.max(w, h);
+    arcs.forEach(a => {
+      ctx.beginPath();
+      ctx.arc(cx, cy, a.r * unit, a.a + t * a.v * 1000, a.a + a.span + t * a.v * 1000);
+      ctx.strokeStyle = `rgba(255,255,255,${a.o})`;
+      ctx.lineWidth = a.w; ctx.lineCap = 'round'; ctx.stroke();
+    });
+  }
+  function loop(ts){ t = ts; draw(); requestAnimationFrame(loop); }
+  size(); addEventListener('resize', () => { size(); draw(); });
+  still ? draw() : requestAnimationFrame(loop);
+})();
+
+document.documentElement.style.setProperty('--accent', META[0].a);
+restore(); paint();
+</script>
