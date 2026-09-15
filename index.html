@@ -62,9 +62,7 @@ legend{padding:0}
 .panel > *{position:relative;z-index:1}
 .brands{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .brands__rule{width:1px;align-self:stretch;min-height:52px;background:rgba(255,255,255,.28)}
-.ministry b{display:block;font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-weight:700;font-size:14.5px;line-height:1.3;letter-spacing:-.01em}
-.ministry small{display:block;font-size:7.6px;letter-spacing:.12em;font-weight:600;opacity:.8;direction:ltr;text-align:right;line-height:1.6;margin-top:4px}
-.ministry__logo{height:58px;width:auto}
+.ministry__logo{height:46px;width:auto;filter:brightness(0) invert(1)}
 .lockup{display:flex;align-items:center;gap:14px}
 .lockup svg{width:54px;height:60px;flex:none}
 .lockup b{display:block;font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-weight:700;font-size:17px;line-height:1.25;letter-spacing:-.01em}
@@ -95,9 +93,7 @@ legend{padding:0}
   .brands__rule{min-height:44px}
   .lockup svg{width:44px;height:49px}
   .lockup b{font-size:15px}
-  .ministry b{font-size:12.5px}
-  .ministry small{font-size:6.6px}
-  .ministry__logo{height:46px}
+  .ministry__logo{height:36px}
   .panel__body{margin-top:0}
   .rail{flex-direction:row;gap:4px;overflow-x:auto;scrollbar-width:none}
   .rail::-webkit-scrollbar{display:none}
@@ -314,12 +310,8 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
 
       <span class="brands__rule" aria-hidden="true"></span>
 
-      <!-- شعار الوزارة: استبدل هذا العنصر بالملف الرسمي عند توفره
-           <img class="ministry__logo" src="mohrsd.svg" alt="وزارة الموارد البشرية والتنمية الاجتماعية"> -->
-      <div class="ministry">
-        <b>وزارة الموارد البشرية<br>والتنمية الاجتماعية</b>
-        <small>MINISTRY OF HUMAN RESOURCES<br>AND SOCIAL DEVELOPMENT</small>
-      </div>
+      <!-- شعار الوزارة الرسمي، يُعرض بالنسخة البيضاء على الخلفية الداكنة -->
+      <img class="ministry__logo" src="logo-mhrsd.svg" alt="وزارة الموارد البشرية والتنمية الاجتماعية">
     </div>
 
     <div>
