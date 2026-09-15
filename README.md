@@ -23,7 +23,7 @@
 
 1. من لوحة Supabase → **SQL Editor** → شغّل محتوى `supabase-setup.sql` مرة واحدة.
    يُنشئ الملف جدول `csr_partnership_responses` فقط، ولا يمسّ أي جدول قائم في المشروع.
-2. افتح `index.html` وضع المفتاح العام في أعلى وسم `<script>`:
+2. المفتاح العام مضبوط في `index.html` لمشروع `akawkmoygfhdmzcoqfly`. لتغيير المشروع عدّل أعلى وسم `<script>`:
 
    ```js
    const SUPABASE_URL = "https://<project-ref>.supabase.co";
