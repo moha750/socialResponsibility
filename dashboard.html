@@ -201,6 +201,8 @@ td.ltr{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
       </div>
       <button class="btn btn--primary" id="go" type="submit">دخول</button>
     </form>
+    <button class="btn btn--ghost" id="try" type="button" style="width:100%;margin-top:10px">استعراض ببيانات تجريبية</button>
+    <p style="margin:10px 0 0;font-size:11.5px;color:var(--faint);text-align:center">بيانات مولّدة داخل المتصفح للاستعراض فقط — لا تمسّ قاعدة البيانات.</p>
   </div>
 </section>
 
@@ -347,7 +349,7 @@ td.ltr{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
 const SUPABASE_URL = "https://akawkmoygfhdmzcoqfly.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrYXdrbW95Z2ZoZG16Y29xZmx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMjcxNjcsImV4cCI6MjA5OTgwMzE2N30.yRpBcxJDA_ipL0JSTAPIR3HtQ-kFx_dmfhe8NvZr3KQ";
 const TABLE = "csr_partnership_responses";
-const DEMO = new URLSearchParams(location.search).has('demo');
+let DEMO = new URLSearchParams(location.search).has('demo');
 
 const $ = s => document.querySelector(s);
 const el = (t, c, txt) => { const n = document.createElement(t); if (c) n.className = c; if (txt != null) n.textContent = txt; return n; };
@@ -762,6 +764,7 @@ $('#login').addEventListener('submit', async e => {
     msg('gate-msg', /Invalid login/i.test(err.message) ? 'البريد أو كلمة المرور غير صحيحة.' : netMsg(err));
   }finally{ btn.disabled = false; btn.textContent = 'دخول'; }
 });
+$('#try').addEventListener('click', () => { DEMO = true; enter(); load(); });
 $('#out').addEventListener('click', () => { forget(); location.reload(); });
 $('#refresh').addEventListener('click', load);
 $('#csv').addEventListener('click', csv);
