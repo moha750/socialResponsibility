@@ -1,0 +1,821 @@
+<title>لوحة ردود حصر المنشآت</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@500;700;900&display=swap">
+<style>
+:root{
+  --navy:#1B3984; --teal:#007E7B; --blue:#2680C2; --green:#01A993;
+  --ground:#EFF4F4; --surface:#FFFFFF; --surface-2:#F6FAFA; --surface-3:#EAF1F1;
+  --ink:#232E33; --muted:#5F7379; --faint:#8598A0; --line:#DCE6E6; --line-strong:#C3D3D3;
+  --accent:#00937F;
+  --danger:#B4452C; --danger-soft:#FBEDE9; --good:#0E7C61;
+  --shadow:0 1px 2px rgba(22,49,60,.05),0 10px 26px -18px rgba(22,49,60,.3);
+  /* ---- data-viz slots (validated: light, surface #fff) ---- */
+  --s1:#2F5AC0; --s2:#00937F; --s3:#D9791D; --s4:#6E63C9; --s-null:#9BAAB0;
+  --seq-1:#E2F0EE; --seq-2:#BCE0DA; --seq-3:#89CBC1; --seq-4:#4BB0A2; --seq-5:#00937F;
+  --grid:#E6EDED;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#050F28; --surface:#0D1D42; --surface-2:#112450; --surface-3:#162C5C;
+    --ink:#E9F0F8; --muted:#9FB2C9; --faint:#7C90AC; --line:#1E3565; --line-strong:#2B4780;
+    --accent:#0C9E88;
+    --danger:#F0947C; --danger-soft:#3A1A14; --good:#2CC5AE;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 40px -24px rgba(0,0,0,.9);
+    --s1:#4E77D8; --s2:#0C9E88; --s3:#D07F22; --s4:#8076D6; --s-null:#66798F;
+    --seq-1:#123055; --seq-2:#0F4A5E; --seq-3:#0C6A69; --seq-4:#0A8878; --seq-5:#12B39A;
+    --grid:#1B3161;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#050F28; --surface:#0D1D42; --surface-2:#112450; --surface-3:#162C5C;
+  --ink:#E9F0F8; --muted:#9FB2C9; --faint:#7C90AC; --line:#1E3565; --line-strong:#2B4780;
+  --accent:#0C9E88;
+  --danger:#F0947C; --danger-soft:#3A1A14; --good:#2CC5AE;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 40px -24px rgba(0,0,0,.9);
+  --s1:#4E77D8; --s2:#0C9E88; --s3:#D07F22; --s4:#8076D6; --s-null:#66798F;
+  --seq-1:#123055; --seq-2:#0F4A5E; --seq-3:#0C6A69; --seq-4:#0A8878; --seq-5:#12B39A;
+  --grid:#1B3161;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);direction:rtl;
+  font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;
+  font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.kufi{font-family:"Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;text-wrap:balance}
+button,input,select{font:inherit;color:inherit}
+:where(a,button,input,select,[tabindex]):focus-visible{outline:2.5px solid var(--s1);outline-offset:2px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- login ---------- */
+.gate{min-height:100vh;display:grid;place-items:center;padding:24px;
+  background:linear-gradient(205deg,#16337A 0%,#10527A 52%,#00706E 100%)}
+.gate__card{width:min(400px,100%);background:var(--surface);border-radius:16px;padding:30px;box-shadow:0 30px 70px -30px rgba(0,0,0,.6)}
+.gate__card h1{margin:16px 0 4px;font-size:22px;font-weight:700}
+.gate__card p{margin:0 0 22px;color:var(--muted);font-size:13.5px}
+.gate__mark{display:flex;align-items:center;gap:10px}
+.gate__mark svg{width:34px;height:38px}
+.gate__mark b{font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-size:13px;line-height:1.25}
+.f{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.f label{font-size:13px;font-weight:600;font-family:"Noto Kufi Arabic",Tahoma,sans-serif}
+.in{width:100%;background:var(--surface);border:1.5px solid var(--line-strong);border-radius:10px;padding:10px 12px;transition:border-color .2s,box-shadow .2s}
+.in:focus{outline:none;border-color:var(--s1);box-shadow:0 0 0 3.5px color-mix(in srgb,var(--s1) 20%,transparent)}
+.in[dir="ltr"]{direction:ltr;text-align:left}
+.btn{border:1.5px solid transparent;border-radius:10px;padding:10px 18px;font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:background .2s,transform .15s,border-color .2s,color .2s}
+.btn:active{transform:translateY(1px)}
+.btn--primary{background:var(--navy);color:#fff;width:100%}
+.btn--primary:hover{background:#16337A}
+:root[data-theme="dark"] .btn--primary,:root:not([data-theme="light"]) .btn--primary{color:#07142F}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn--primary{color:#fff}}
+.btn--ghost{background:transparent;border-color:var(--line-strong);color:var(--muted)}
+.btn--ghost:hover{color:var(--ink);border-color:var(--ink)}
+.btn--ghost[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.msg{display:none;margin:0 0 14px;padding:10px 12px;border-radius:9px;background:var(--danger-soft);border:1.5px solid color-mix(in srgb,var(--danger) 45%,transparent);color:var(--danger);font-size:13px}
+.msg.on{display:block}
+
+/* ---------- shell ---------- */
+.wrap{max-width:1320px;margin:0 auto;padding:22px clamp(14px,2.4vw,28px) 60px}
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 0 18px}
+.top__brand{display:flex;align-items:center;gap:11px}
+.top__brand svg{width:34px;height:38px;flex:none}
+.top__brand b{display:block;font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-size:15px;line-height:1.25}
+.top__brand small{display:block;font-size:11.5px;color:var(--muted)}
+.top .sp{flex:1}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.seg{display:flex;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{background:none;border:0;padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
+.search{position:relative}
+.search .in{padding-inline-start:34px;min-width:210px}
+.search svg{position:absolute;inset-inline-start:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--faint);pointer-events:none}
+.stamp{font-size:12px;color:var(--faint)}
+
+/* ---------- cards & grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.card--wide{grid-column:span 8}.card--half{grid-column:span 6}.card--third{grid-column:span 4}.card--full{grid-column:span 12}
+@media (max-width:1050px){.card--wide,.card--half,.card--third{grid-column:span 12}}
+.card__h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}
+.card__t{margin:0;font-size:15px;font-weight:700}
+.card__s{margin:0 0 16px;font-size:12.5px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:14px}
+@media (max-width:1050px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.kpis{grid-template-columns:1fr}}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+.kpi__l{margin:0;font-size:12.5px;color:var(--muted)}
+.kpi__v{margin:2px 0 0;font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.15;font-family:"Noto Kufi Arabic",Tahoma,sans-serif}
+.kpi__d{margin:4px 0 0;font-size:12px;color:var(--faint)}
+.kpi__spark{margin-top:8px;height:26px;width:100%}
+.empty{display:grid;place-items:center;min-height:120px;color:var(--faint);font-size:13.5px;text-align:center;border:1.5px dashed var(--line);border-radius:12px}
+
+/* ---------- viz ---------- */
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+.ax{font-size:11px;fill:var(--muted)}
+.ax-line{stroke:var(--grid);stroke-width:1}
+.lbl{font-size:11.5px;fill:var(--ink);font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.rows{display:flex;flex-direction:column;gap:11px}
+.row{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;align-items:center;gap:12px;font-size:13px}
+.row__bar{height:18px;background:var(--surface-3);border-radius:4px;overflow:hidden;position:relative}
+.row__fill{height:100%;background:var(--s2);border-radius:4px 0 0 4px;width:0;transition:width .8s cubic-bezier(.3,.9,.3,1)}
+.row__v{font-variant-numeric:tabular-nums;color:var(--muted);min-width:56px;text-align:start}
+.row:hover .row__fill{filter:brightness(1.08)}
+.meters{display:grid;gap:16px}
+.meter__top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.meter__pct{font-weight:700;font-variant-numeric:tabular-nums}
+.meter__track{height:10px;border-radius:5px;background:var(--surface-3);overflow:hidden}
+.meter__fill{height:100%;border-radius:5px;background:var(--s2);width:0;transition:width .9s cubic-bezier(.3,.9,.3,1)}
+.stack{display:flex;height:34px;border-radius:6px;overflow:hidden;gap:2px;background:var(--surface)}
+.stack div{transition:flex-grow .8s cubic-bezier(.3,.9,.3,1);display:grid;place-items:center;font-size:12px;font-weight:600;color:#fff;min-width:0}
+.hm{display:grid;gap:2px;overflow-x:auto}
+.hm__c{aspect-ratio:1.9;border-radius:3px;display:grid;place-items:center;font-size:11px;font-variant-numeric:tabular-nums;cursor:default}
+.hm__h{font-size:11px;color:var(--muted);text-align:center;line-height:1.35;padding-bottom:4px}
+.hm__r{font-size:11.5px;color:var(--ink);display:flex;align-items:center;padding-inline-end:8px}
+
+/* ---------- table ---------- */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
+th,td{padding:10px 12px;text-align:start;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--surface-2);font-family:"Noto Kufi Arabic",Tahoma,sans-serif;font-weight:600;font-size:12.5px;color:var(--muted);position:sticky;top:0;cursor:pointer;user-select:none}
+th[aria-sort="descending"]::after{content:" ↓"}th[aria-sort="ascending"]::after{content:" ↑"}
+tbody tr{cursor:pointer;transition:background .15s}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:0}
+td.ltr{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;border:1px solid}
+.pill--yes{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent);background:color-mix(in srgb,var(--good) 10%,transparent)}
+.pill--no{color:var(--muted);border-color:var(--line-strong);background:var(--surface-2)}
+.pill--dev{color:var(--s3);border-color:color-mix(in srgb,var(--s3) 40%,transparent);background:color-mix(in srgb,var(--s3) 10%,transparent)}
+
+/* ---------- drawer & tooltip ---------- */
+.scrim{position:fixed;inset:0;background:rgba(6,18,40,.55);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;inset-block:0;inset-inline-start:0;width:min(460px,100%);background:var(--surface);border-inline-end:1px solid var(--line);
+  transform:translateX(100%);transition:transform .32s cubic-bezier(.3,.9,.3,1);z-index:41;display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.drawer__h{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.drawer__b{padding:6px 20px 24px;overflow:auto}
+.drawer dl{margin:0}
+.drawer dl div{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.drawer dt{flex:0 0 40%;color:var(--muted);margin:0}
+.drawer dd{margin:0;flex:1;font-weight:500;overflow-wrap:anywhere}
+.tip{position:fixed;z-index:60;background:var(--surface);border:1px solid var(--line-strong);border-radius:9px;padding:8px 11px;font-size:12.5px;
+  box-shadow:0 12px 28px -14px rgba(0,0,0,.5);pointer-events:none;opacity:0;transition:opacity .12s;max-width:240px}
+.tip.on{opacity:1}
+.tip b{display:block;font-size:13px;margin-bottom:2px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+<!-- ===================== تسجيل الدخول ===================== -->
+<section class="gate" id="gate">
+  <div class="gate__card">
+    <div class="gate__mark">
+      <svg viewBox="0 0 92 104" fill="none" aria-hidden="true">
+        <path d="M46 100V56" stroke="var(--teal)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M12 76a34 34 0 0 1 68 0" stroke="var(--navy)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M48 54a30 30 0 0 1 34-20" stroke="var(--teal)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M44 54a30 30 0 0 0-32-18" stroke="var(--blue)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M46 52a26 26 0 0 1 18-38" stroke="var(--green)" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+      <b>المسؤولية<br>الاجتماعية</b>
+    </div>
+    <h1>لوحة ردود حصر المنشآت</h1>
+    <p>الدخول مقصور على فريق المسؤولية الاجتماعية.</p>
+    <p class="msg" id="gate-msg"></p>
+    <form id="login">
+      <div class="f">
+        <label for="em">البريد الإلكتروني</label>
+        <input class="in" dir="ltr" type="email" id="em" autocomplete="username" required>
+      </div>
+      <div class="f">
+        <label for="pw">كلمة المرور</label>
+        <input class="in" dir="ltr" type="password" id="pw" autocomplete="current-password" required>
+      </div>
+      <button class="btn btn--primary" id="go" type="submit">دخول</button>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== اللوحة ===================== -->
+<main class="wrap" id="app" hidden>
+  <header class="top">
+    <div class="top__brand">
+      <svg viewBox="0 0 92 104" fill="none" aria-hidden="true">
+        <path d="M46 100V56" stroke="var(--teal)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M12 76a34 34 0 0 1 68 0" stroke="var(--navy)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M48 54a30 30 0 0 1 34-20" stroke="var(--teal)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M44 54a30 30 0 0 0-32-18" stroke="var(--blue)" stroke-width="9" stroke-linecap="round"/>
+        <path d="M46 52a26 26 0 0 1 18-38" stroke="var(--green)" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <b>لوحة ردود حصر المنشآت</b>
+        <small>المسؤولية الاجتماعية — وزارة الموارد البشرية والتنمية الاجتماعية</small>
+      </div>
+    </div>
+    <span class="sp"></span>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="المدة الزمنية">
+        <button type="button" data-range="7">٧ أيام</button>
+        <button type="button" data-range="30">٣٠ يومًا</button>
+        <button type="button" data-range="90">٩٠ يومًا</button>
+        <button type="button" data-range="all" aria-pressed="true">الكل</button>
+      </div>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input class="in" id="q" type="search" placeholder="ابحث باسم المنشأة أو المسؤول" aria-label="بحث">
+      </div>
+      <button class="btn btn--ghost" id="refresh" type="button">تحديث</button>
+      <button class="btn btn--ghost" id="csv" type="button">تصدير CSV</button>
+      <button class="btn btn--ghost" id="out" type="button">خروج</button>
+    </div>
+  </header>
+
+  <p class="msg" id="app-msg"></p>
+
+  <section class="kpis" id="kpis">
+    <article class="kpi">
+      <p class="kpi__l">إجمالي الردود</p>
+      <p class="kpi__v num" id="k-total">—</p>
+      <p class="kpi__d" id="k-total-d">في المدة المحددة</p>
+      <svg class="kpi__spark" id="k-spark" viewBox="0 0 200 26" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </article>
+    <article class="kpi">
+      <p class="kpi__l">ردود آخر ٧ أيام</p>
+      <p class="kpi__v num" id="k-week">—</p>
+      <p class="kpi__d" id="k-week-d">مقارنة بالأسبوع السابق</p>
+    </article>
+    <article class="kpi">
+      <p class="kpi__l">لديها برامج قائمة</p>
+      <p class="kpi__v num" id="k-prog">—</p>
+      <p class="kpi__d" id="k-prog-d">من المنشآت المشاركة</p>
+    </article>
+    <article class="kpi">
+      <p class="kpi__l">ترغب في التنسيق</p>
+      <p class="kpi__v num" id="k-coord">—</p>
+      <p class="kpi__d" id="k-coord-d">فرص تواصل مباشرة</p>
+    </article>
+    <article class="kpi">
+      <p class="kpi__l">تعرض دعمًا ماليًا</p>
+      <p class="kpi__v num" id="k-fin">—</p>
+      <p class="kpi__d" id="k-fin-d">منشأة</p>
+    </article>
+  </section>
+
+  <div class="grid">
+    <article class="card card--wide">
+      <div class="card__h"><h2 class="card__t">الردود عبر الزمن</h2><span class="stamp" id="ts-note"></span></div>
+      <p class="card__s">عدد الردود المستلمة يوميًا.</p>
+      <div id="ts"></div>
+    </article>
+
+    <article class="card card--third">
+      <div class="card__h"><h2 class="card__t">نضج المسؤولية الاجتماعية</h2></div>
+      <p class="card__s">هل لدى المنشأة برامج أو مبادرات قائمة؟</p>
+      <div id="maturity"></div>
+    </article>
+
+    <article class="card card--half">
+      <div class="card__h"><h2 class="card__t">الفئات المستهدفة</h2><span class="stamp" id="tg-note"></span></div>
+      <p class="card__s">الفئات التي تهتم المنشآت بدعمها — يمكن اختيار أكثر من فئة.</p>
+      <div id="groups"></div>
+    </article>
+
+    <article class="card card--half">
+      <div class="card__h"><h2 class="card__t">أنواع المساهمة</h2><span class="stamp" id="ct-note"></span></div>
+      <p class="card__s">ما الذي تستطيع المنشآت تقديمه فعليًا.</p>
+      <div id="contrib"></div>
+    </article>
+
+    <article class="card card--half">
+      <div class="card__h"><h2 class="card__t">الجاهزية والحوكمة</h2></div>
+      <p class="card__s">نسبة المنشآت التي أجابت بـ«نعم» في كل بند.</p>
+      <div class="meters" id="meters"></div>
+    </article>
+
+    <article class="card card--half">
+      <div class="card__h"><h2 class="card__t">الفئات مقابل نوع المساهمة</h2></div>
+      <p class="card__s">عدد المنشآت التي تجمع بين كل فئة ونوع مساهمة — كلما دكن اللون زاد العدد.</p>
+      <div id="heat"></div>
+    </article>
+
+    <article class="card card--full">
+      <div class="card__h"><h2 class="card__t">الردود</h2><span class="stamp" id="tbl-note"></span></div>
+      <p class="card__s">اضغط أي صف لعرض الإجابة كاملة.</p>
+      <div class="tblwrap">
+        <table id="tbl">
+          <thead><tr>
+            <th data-k="created_at" aria-sort="descending">التاريخ</th>
+            <th data-k="org_name">المنشأة</th>
+            <th data-k="contact_name">مسؤول التواصل</th>
+            <th data-k="phone">الجوال</th>
+            <th data-k="has_programs">برامج قائمة</th>
+            <th data-k="contribution_types">المساهمة</th>
+            <th data-k="wants_coordination">التنسيق</th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="tbl-empty" hidden>لا توجد ردود مطابقة.</div>
+    </article>
+  </div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="تفاصيل الرد">
+  <div class="drawer__h">
+    <h2 class="card__t" id="d-title">تفاصيل الرد</h2>
+    <button class="btn btn--ghost" id="d-close" type="button">إغلاق</button>
+  </div>
+  <div class="drawer__b"><dl id="d-body"></dl></div>
+</aside>
+<div class="tip" id="tip" role="status"></div>
+
+<script>
+/* ============================================================
+   لوحة ردود حصر المنشآت — المسؤولية الاجتماعية
+   القراءة تتطلب تسجيل دخول (Supabase Auth) وسياسة select
+   للمستخدمين المسجّلين. شغّل supabase-dashboard.sql مرة واحدة.
+   ============================================================ */
+const SUPABASE_URL = "https://akawkmoygfhdmzcoqfly.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrYXdrbW95Z2ZoZG16Y29xZmx5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyMjcxNjcsImV4cCI6MjA5OTgwMzE2N30.yRpBcxJDA_ipL0JSTAPIR3HtQ-kFx_dmfhe8NvZr3KQ";
+const TABLE = "csr_partnership_responses";
+const DEMO = new URLSearchParams(location.search).has('demo');
+
+const $ = s => document.querySelector(s);
+const el = (t, c, txt) => { const n = document.createElement(t); if (c) n.className = c; if (txt != null) n.textContent = txt; return n; };
+const N = n => n.toLocaleString('en-US');
+const PCT = (a, b) => b ? Math.round(a / b * 100) : 0;
+const S = { rows: [], view: [], range: 'all', q: '', sort: 'created_at', dir: -1, token: null, refresh: null };
+
+/* ---------------- مفاتيح الحقول ---------------- */
+const GROUPS = ['الأيتام والأيتام ذوو الظروف الخاصة','الأشخاص ذوو الإعاقة','اضطرابات التوحد وطيف التوحد','الفئات الأشد حاجة','طلاب وطالبات المدارس','الباحثون عن العمل'];
+const CONTRIB = ['دعم مالي','دعم عيني','رعاية المبادرات والفعاليات'];
+const CONTRIB_SHORT = {'دعم مالي':'مالي','دعم عيني':'عيني','رعاية المبادرات والفعاليات':'رعاية','أخرى':'أخرى'};
+const GROUP_SHORT = {'الأيتام والأيتام ذوو الظروف الخاصة':'الأيتام','الأشخاص ذوو الإعاقة':'ذوو الإعاقة','اضطرابات التوحد وطيف التوحد':'طيف التوحد','الفئات الأشد حاجة':'الأشد حاجة','طلاب وطالبات المدارس':'طلاب المدارس','الباحثون عن العمل':'باحثون عن عمل','أخرى':'أخرى'};
+const METERS = [
+  ['registered_platform','مسجّلة في المنصة الوطنية'],
+  ['existing_initiative','لديها مبادرة قائمة للتعاون'],
+  ['wants_department','ترغب في تأسيس إدارة للمسؤولية'],
+  ['has_officer','عيّنت مسؤولًا مختصًا']
+];
+const arr = v => Array.isArray(v) ? v : (v ? [v] : []);
+const day = iso => new Date(iso).toISOString().slice(0, 10);
+
+/* ---------------- المصادقة ---------------- */
+async function api(path, opts = {}){
+  const res = await fetch(SUPABASE_URL + path, {
+    ...opts,
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: 'Bearer ' + (S.token || SUPABASE_KEY),
+      'Content-Type': 'application/json',
+      ...(opts.headers || {})
+    }
+  });
+  return res;
+}
+async function signIn(email, password){
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error_description || data.msg || 'تعذّر تسجيل الدخول.');
+  return data;
+}
+function netMsg(err){
+  return /Failed to fetch|NetworkError|load failed/i.test(err.message)
+    ? 'تعذّر الوصول إلى قاعدة البيانات من هذه الصفحة. افتح اللوحة من الرابط المستضاف، أو أضف ‎?demo=1‎ لاستعراض التصميم ببيانات تجريبية.'
+    : err.message;
+}
+function keep(session){
+  S.token = session.access_token; S.refresh = session.refresh_token;
+  try{ sessionStorage.setItem('csr-session', JSON.stringify({ t: S.token, r: S.refresh })); }catch(e){}
+}
+function forget(){
+  S.token = S.refresh = null;
+  try{ sessionStorage.removeItem('csr-session'); }catch(e){}
+}
+async function renew(){
+  if (!S.refresh) return false;
+  try{
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+      method: 'POST', headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: S.refresh })
+    });
+    if (!res.ok) return false;
+    keep(await res.json()); return true;
+  }catch(e){ return false; }
+}
+
+/* ---------------- تحميل البيانات ---------------- */
+async function load(){
+  if (DEMO){ S.rows = demoRows(); return apply(); }
+  msg('app-msg', '');
+  let res;
+  try{ res = await api(`/rest/v1/${TABLE}?select=*&order=created_at.desc`); }
+  catch(err){ return msg('app-msg', netMsg(err)); }
+  if (res.status === 401 && await renew()) res = await api(`/rest/v1/${TABLE}?select=*&order=created_at.desc`);
+  if (res.status === 401){ forget(); return gate('انتهت الجلسة. سجّل الدخول مرة أخرى.'); }
+  if (!res.ok){
+    const t = await res.text();
+    return msg('app-msg', t.includes('permission') || res.status === 403
+      ? 'الحساب لا يملك صلاحية قراءة الردود. شغّل ملف supabase-dashboard.sql في قاعدة البيانات.'
+      : `تعذّر تحميل الردود (${res.status}). ${t}`);
+  }
+  S.rows = await res.json();
+  apply();
+}
+function msg(id, text){ const n = $('#' + id); n.textContent = text; n.classList.toggle('on', !!text); }
+
+/* ---------------- التصفية ---------------- */
+function apply(){
+  const now = Date.now(), days = S.range === 'all' ? Infinity : +S.range;
+  const q = S.q.trim().toLowerCase();
+  S.view = S.rows.filter(r => {
+    if (days !== Infinity && (now - new Date(r.created_at)) > days * 864e5) return false;
+    if (!q) return true;
+    return [r.org_name, r.contact_name, r.email, r.job_title, r.phone]
+      .some(v => (v || '').toLowerCase().includes(q));
+  });
+  render();
+}
+function render(){
+  const v = S.view, n = v.length;
+  $('#ts-note').textContent = n ? `${N(n)} رد` : '';
+  kpis(v); timeseries(v); maturity(v);
+  const tg = tally(v, 'target_groups', GROUPS), ct = tally(v, 'contribution_types', CONTRIB);
+  bars('#groups', tg, n, GROUP_SHORT);
+  bars('#contrib', ct, n, CONTRIB_SHORT);
+  $('#tg-note').textContent = n && tg[0] && tg[0][1] ? `الأعلى: ${GROUP_SHORT[tg[0][0]] || tg[0][0]}` : '';
+  $('#ct-note').textContent = n && ct[0] && ct[0][1] ? `الأعلى: ${CONTRIB_SHORT[ct[0][0]] || ct[0][0]}` : '';
+  meters(v); heat(v); table(v);
+}
+function tally(rows, field, known){
+  const map = new Map([...known.map(k => [k, 0]), ['أخرى', 0]]);
+  rows.forEach(r => arr(r[field]).forEach(x => map.set(map.has(x) ? x : 'أخرى', (map.get(map.has(x) ? x : 'أخرى') || 0) + 1)));
+  return [...map].filter(([, c], i) => c > 0 || i < known.length).sort((a, b) => b[1] - a[1]);
+}
+
+/* ---------------- مؤشرات ---------------- */
+function kpis(v){
+  const n = v.length, now = Date.now();
+  const inDays = d => v.filter(r => (now - new Date(r.created_at)) <= d * 864e5).length;
+  const week = inDays(7), prev = inDays(14) - week;
+  $('#k-total').textContent = N(n);
+  $('#k-total-d').textContent = S.range === 'all' ? 'منذ بداية النموذج' : `خلال ${S.range} يومًا`;
+  $('#k-week').textContent = N(week);
+  $('#k-week-d').textContent = prev || week
+    ? (week >= prev ? `▲ ${N(week - prev)} عن الأسبوع السابق` : `▼ ${N(prev - week)} عن الأسبوع السابق`)
+    : 'لا ردود بعد';
+  const prog = v.filter(r => r.has_programs === 'نعم').length;
+  $('#k-prog').textContent = n ? PCT(prog, n) + '%' : '—';
+  $('#k-prog-d').textContent = n ? `${N(prog)} من ${N(n)} منشأة` : 'في انتظار الردود';
+  const co = v.filter(r => r.wants_coordination === 'نعم').length;
+  $('#k-coord').textContent = n ? PCT(co, n) + '%' : '—';
+  $('#k-coord-d').textContent = n ? `${N(co)} منشأة تطلب التنسيق` : 'في انتظار الردود';
+  const fin = v.filter(r => arr(r.contribution_types).includes('دعم مالي')).length;
+  $('#k-fin').textContent = N(fin);
+  $('#k-fin-d').textContent = n ? `${PCT(fin, n)}% من المشاركين` : 'منشأة';
+  spark(series(v, 14));
+}
+function series(rows, days){
+  const out = [], today = new Date(); today.setHours(0,0,0,0);
+  const counts = new Map();
+  rows.forEach(r => counts.set(day(r.created_at), (counts.get(day(r.created_at)) || 0) + 1));
+  if (days === 'auto'){
+    const ds = [...counts.keys()].sort();
+    if (!ds.length) return [];
+    const start = new Date(ds[0]), span = Math.min(180, Math.round((today - start) / 864e5) + 1);
+    days = Math.max(span, 7);
+  }
+  for (let i = days - 1; i >= 0; i--){
+    const d = new Date(today.getTime() - i * 864e5).toISOString().slice(0, 10);
+    out.push({ d, c: counts.get(d) || 0 });
+  }
+  return out;
+}
+function spark(data){
+  const svg = $('#k-spark'); svg.innerHTML = '';
+  if (!data.length) return;
+  const max = Math.max(1, ...data.map(p => p.c)), W = 200, H = 26;
+  const x = i => i * (W / Math.max(1, data.length - 1));
+  const y = c => H - 2 - (c / max) * (H - 6);
+  const line = data.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(p.c).toFixed(1)}`).join(' ');
+  svg.insertAdjacentHTML('beforeend',
+    `<path d="${line} L${W} ${H} L0 ${H} Z" fill="var(--s2)" opacity=".1"/>
+     <path d="${line}" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`);
+}
+
+/* ---------------- الردود عبر الزمن ---------------- */
+function timeseries(v){
+  const host = $('#ts'); host.innerHTML = '';
+  const data = series(v, S.range === 'all' ? 'auto' : +S.range);
+  if (!data.length || !v.length){ host.append(emptyBox('لا توجد ردود في هذه المدة.')); return; }
+  const W = Math.max(320, host.clientWidth || 640), H = 232;
+  const m = { t: 14, r: 42, b: 26, l: 10 };
+  const max = Math.max(2, ...data.map(p => p.c));
+  const step = (W - m.l - m.r) / Math.max(1, data.length - 1);
+  const X = i => (W - m.r) - i * step;                 // الأقدم يمينًا، الأحدث يسارًا
+  const Y = c => m.t + (1 - c / max) * (H - m.t - m.b);
+  const ticks = [0, Math.round(max / 2), max].filter((x, i, a) => a.indexOf(x) === i);
+  const line = data.map((p, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)} ${Y(p.c).toFixed(1)}`).join(' ');
+  const area = `${line} L${X(data.length - 1).toFixed(1)} ${H - m.b} L${X(0).toFixed(1)} ${H - m.b} Z`;
+  const fmt = d => new Date(d).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { day: 'numeric', month: 'short' });
+  const every = Math.ceil(data.length / 6);
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'chart'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('height', H);
+  svg.innerHTML =
+    ticks.map(t => `<line class="ax-line" x1="${m.l}" x2="${W - m.r}" y1="${Y(t)}" y2="${Y(t)}"/>
+                    <text class="ax" x="${W - m.r + 8}" y="${Y(t) + 4}">${N(t)}</text>`).join('') +
+    `<path d="${area}" fill="var(--s2)" opacity=".1"/>
+     <path d="${line}" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` +
+    data.map((p, i) => i % every === 0 ? `<text class="ax" x="${X(i)}" y="${H - 8}" text-anchor="middle">${fmt(p.d)}</text>` : '').join('') +
+    `<line id="ts-cross" x1="0" x2="0" y1="${m.t}" y2="${H - m.b}" stroke="var(--line-strong)" stroke-width="1" opacity="0"/>
+     <circle id="ts-dot" r="4.5" fill="var(--s2)" stroke="var(--surface)" stroke-width="2" opacity="0"/>
+     <rect id="ts-hit" x="0" y="0" width="${W}" height="${H}" fill="transparent"/>`;
+  host.append(svg);
+
+  const cross = svg.querySelector('#ts-cross'), dot = svg.querySelector('#ts-dot');
+  svg.querySelector('#ts-hit').addEventListener('pointermove', e => {
+    const box = svg.getBoundingClientRect(), px = (e.clientX - box.left) * (W / box.width);
+    const i = Math.max(0, Math.min(data.length - 1, Math.round(((W - m.r) - px) / step)));
+    const p = data[i];
+    cross.setAttribute('x1', X(i)); cross.setAttribute('x2', X(i)); cross.setAttribute('opacity', '1');
+    dot.setAttribute('cx', X(i)); dot.setAttribute('cy', Y(p.c)); dot.setAttribute('opacity', '1');
+    tip(e, `<b>${fmt(p.d)}</b>${N(p.c)} ${p.c === 1 ? 'رد' : 'ردود'}`);
+  });
+  svg.addEventListener('pointerleave', () => { cross.setAttribute('opacity', '0'); dot.setAttribute('opacity', '0'); tipOff(); });
+}
+function emptyBox(text){ return el('div', 'empty', text); }
+
+/* ---------------- نضج المسؤولية ---------------- */
+function maturity(v){
+  const host = $('#maturity'); host.innerHTML = '';
+  const order = [['نعم', 'var(--s2)'], ['قيد التطوير', 'var(--s3)'], ['لا', 'var(--s-null)']];
+  const counts = order.map(([k]) => v.filter(r => r.has_programs === k).length);
+  const total = counts.reduce((a, b) => a + b, 0);
+  if (!total){ host.append(emptyBox('لا توجد ردود في هذه المدة.')); return; }
+  const stack = el('div', 'stack');
+  order.forEach(([k, c], i) => {
+    if (!counts[i]) return;
+    const seg = el('div'); seg.style.background = c; seg.style.flex = counts[i];
+    const pct = PCT(counts[i], total);
+    if (pct >= 14) seg.textContent = pct + '%';
+    seg.title = `${k}: ${N(counts[i])}`;
+    seg.addEventListener('pointermove', e => tip(e, `<b>${k}</b>${N(counts[i])} منشأة · ${pct}%`));
+    seg.addEventListener('pointerleave', tipOff);
+    stack.append(seg);
+  });
+  const legend = el('div', 'legend');
+  order.forEach(([k, c], i) => {
+    const s = el('span'); const sw = el('i'); sw.style.background = c;
+    s.append(sw, el('span', null, `${k} — ${N(counts[i])} (${PCT(counts[i], total)}%)`));
+    legend.append(s);
+  });
+  const ready = PCT(counts[0] + counts[1], total);
+  const note = el('p', 'card__s', `${ready}% من المنشآت لديها برامج قائمة أو قيد التطوير — وهي الأقرب للتفعيل السريع.`);
+  note.style.margin = '16px 0 0';
+  host.append(stack, legend, note);
+}
+
+/* ---------------- أشرطة ---------------- */
+function bars(sel, pairs, total, shorten){
+  const host = $(sel); host.innerHTML = '';
+  const max = Math.max(1, ...pairs.map(p => p[1]));
+  if (!total || !pairs.some(p => p[1])){ host.append(emptyBox('لا توجد بيانات كافية بعد.')); return; }
+  const list = el('div', 'rows');
+  pairs.forEach(([k, c]) => {
+    const row = el('div', 'row');
+    row.append(el('span', null, shorten[k] || k));
+    const track = el('div', 'row__bar'), fill = el('div', 'row__fill');
+    track.append(fill); row.append(track);
+    row.append(el('span', 'row__v', `${N(c)} · ${PCT(c, total)}%`));
+    row.addEventListener('pointermove', e => tip(e, `<b>${k}</b>${N(c)} منشأة من ${N(total)}`));
+    row.addEventListener('pointerleave', tipOff);
+    list.append(row);
+    requestAnimationFrame(() => fill.style.width = (c / max * 100) + '%');
+  });
+  host.append(list);
+}
+
+/* ---------------- الجاهزية ---------------- */
+function meters(v){
+  const host = $('#meters'); host.innerHTML = '';
+  if (!v.length){ host.append(emptyBox('لا توجد ردود في هذه المدة.')); return; }
+  METERS.forEach(([key, label]) => {
+    const answered = v.filter(r => r[key]).length;
+    const yes = v.filter(r => r[key] === 'نعم').length;
+    const pct = PCT(yes, answered);
+    const wrap = el('div');
+    const top = el('div', 'meter__top');
+    top.append(el('span', null, label), el('span', 'meter__pct', `${pct}%`));
+    const track = el('div', 'meter__track'), fill = el('div', 'meter__fill');
+    track.append(fill); wrap.append(top, track);
+    wrap.append(Object.assign(el('p', 'kpi__d', `${N(yes)} من ${N(answered)} منشأة`), { style: 'margin:6px 0 0' }));
+    host.append(wrap);
+    requestAnimationFrame(() => fill.style.width = pct + '%');
+  });
+}
+
+/* ---------------- خريطة حرارية ---------------- */
+function heat(v){
+  const host = $('#heat'); host.innerHTML = '';
+  let cols = [...CONTRIB, 'أخرى'], rowsK = [...GROUPS, 'أخرى'];
+  if (!v.length){ host.append(emptyBox('لا توجد ردود في هذه المدة.')); return; }
+  const all = [...CONTRIB, 'أخرى'], allR = [...GROUPS, 'أخرى'];
+  const cell = (g, c) => v.filter(r => arr(r.target_groups).some(x => (allR.includes(x) ? x : 'أخرى') === g)
+                                    && arr(r.contribution_types).some(x => (all.includes(x) ? x : 'أخرى') === c)).length;
+  // «أخرى» تظهر فقط عند وجود بيانات فيها
+  if (!rowsK.filter(g => g === 'أخرى').some(g => cols.some(c => cell(g, c)))) rowsK = rowsK.filter(g => g !== 'أخرى');
+  if (!cols.filter(c => c === 'أخرى').some(c => rowsK.some(g => cell(g, c)))) cols = cols.filter(c => c !== 'أخرى');
+  const grid = el('div', 'hm');
+  grid.style.gridTemplateColumns = `minmax(90px,1.4fr) repeat(${cols.length},1fr)`;
+  grid.append(el('div'));
+  cols.forEach(c => grid.append(el('div', 'hm__h', CONTRIB_SHORT[c] || c)));
+  const vals = [];
+  rowsK.forEach(g => cols.forEach(c => vals.push(cell(g, c))));
+  const max = Math.max(1, ...vals);
+  const ramp = ['var(--seq-1)','var(--seq-2)','var(--seq-3)','var(--seq-4)','var(--seq-5)'];
+  let i = 0;
+  rowsK.forEach(g => {
+    grid.append(el('div', 'hm__r', GROUP_SHORT[g] || g));
+    cols.forEach(c => {
+      const n = vals[i++];
+      const box = el('div', 'hm__c', n ? N(n) : '');
+      const lvl = n === 0 ? 0 : Math.min(4, Math.ceil(n / max * 5) - 1);
+      box.style.background = n === 0 ? 'var(--surface-3)' : ramp[lvl];
+      box.style.color = lvl >= 3 ? '#fff' : 'var(--ink)';
+      box.addEventListener('pointermove', e => tip(e, `<b>${GROUP_SHORT[g] || g} × ${CONTRIB_SHORT[c] || c}</b>${N(n)} منشأة`));
+      box.addEventListener('pointerleave', tipOff);
+      grid.append(box);
+    });
+  });
+  host.append(grid);
+}
+
+/* ---------------- الجدول ---------------- */
+const FIELDS = [
+  ['created_at','تاريخ الإرسال'],['org_name','اسم المنشأة'],['contact_name','مسؤول التواصل'],
+  ['job_title','المسمى الوظيفي'],['email','البريد الإلكتروني'],['phone','رقم التواصل'],
+  ['has_programs','برامج قائمة'],['target_groups','الفئات المستهدفة'],['target_groups_other','فئات أخرى'],
+  ['contribution_types','نوع المساهمة'],['contribution_other','مساهمة أخرى'],['existing_initiative','مبادرة قائمة'],
+  ['registered_platform','التسجيل في المنصة'],['wants_coordination','الرغبة في التنسيق'],['coordination_other','تفاصيل التنسيق'],
+  ['wants_department','تأسيس إدارة'],['has_officer','تعيين مسؤول'],['notes','ملاحظات ومقترحات']
+];
+const dateShort = iso => new Date(iso).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn', { year: 'numeric', month: 'short', day: 'numeric' });
+const dateLong  = iso => new Date(iso).toLocaleString('ar-SA-u-ca-gregory-nu-latn', { dateStyle: 'long', timeStyle: 'short' });
+const pill = v => {
+  const c = v === 'نعم' ? 'pill--yes' : v === 'قيد التطوير' ? 'pill--dev' : 'pill--no';
+  const s = el('span', 'pill ' + c, v || '—'); return s;
+};
+function table(v){
+  const body = $('#tbody'); body.innerHTML = '';
+  $('#tbl-note').textContent = `${N(v.length)} من ${N(S.rows.length)}`;
+  $('#tbl-empty').hidden = v.length > 0;
+  const sorted = [...v].sort((a, b) => {
+    const k = S.sort, x = a[k], y = b[k];
+    const va = Array.isArray(x) ? x.length : (x ?? ''), vb = Array.isArray(y) ? y.length : (y ?? '');
+    return (va > vb ? 1 : va < vb ? -1 : 0) * S.dir;
+  });
+  sorted.forEach(r => {
+    const tr = el('tr');
+    tr.append(Object.assign(el('td', null, dateShort(r.created_at)), { title: dateLong(r.created_at) }));
+    tr.append(el('td', null, r.org_name || '—'));
+    tr.append(el('td', null, r.contact_name || '—'));
+    const ph = el('td', 'ltr', r.phone || '—'); tr.append(ph);
+    const td1 = el('td'); td1.append(pill(r.has_programs)); tr.append(td1);
+    tr.append(el('td', null, arr(r.contribution_types).map(c => CONTRIB_SHORT[c] || c).join('، ') || '—'));
+    const td2 = el('td'); td2.append(pill(r.wants_coordination)); tr.append(td2);
+    tr.addEventListener('click', () => openRow(r));
+    body.append(tr);
+  });
+}
+function openRow(r){
+  $('#d-title').textContent = r.org_name || 'تفاصيل الرد';
+  const dl = $('#d-body'); dl.innerHTML = '';
+  FIELDS.forEach(([k, label]) => {
+    let val = r[k];
+    if (k === 'created_at') val = dateLong(val);
+    if (Array.isArray(val)) val = val.join('، ');
+    if (val === null || val === undefined || val === '') return;
+    const row = el('div');
+    row.append(el('dt', null, label), el('dd', null, String(val)));
+    dl.append(row);
+  });
+  $('#drawer').classList.add('on'); $('#scrim').classList.add('on');
+  $('#d-close').focus();
+}
+function closeDrawer(){ $('#drawer').classList.remove('on'); $('#scrim').classList.remove('on'); }
+
+/* ---------------- تصدير ---------------- */
+function csv(){
+  const rows = [FIELDS.map(([, l]) => l)];
+  S.view.forEach(r => rows.push(FIELDS.map(([k]) => {
+    let v = r[k]; if (Array.isArray(v)) v = v.join('، ');
+    if (k === 'created_at') v = dateLong(v);
+    return '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  })));
+  const blob = new Blob(['﻿' + rows.map(r => r.join(',')).join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = el('a'); a.href = URL.createObjectURL(blob);
+  a.download = `ردود-حصر-المنشآت-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+/* ---------------- تلميح ---------------- */
+const TIP = () => $('#tip');
+function tip(e, html){
+  const t = TIP(); t.innerHTML = html; t.classList.add('on');
+  const pad = 14, w = t.offsetWidth, h = t.offsetHeight;
+  let x = e.clientX - w - pad; if (x < 8) x = e.clientX + pad;
+  let y = e.clientY - h - pad; if (y < 8) y = e.clientY + pad;
+  t.style.left = x + 'px'; t.style.top = y + 'px';
+}
+function tipOff(){ TIP().classList.remove('on'); }
+
+/* ---------------- الواجهة ---------------- */
+function gate(text){
+  $('#app').hidden = true; $('#gate').style.display = '';
+  msg('gate-msg', text || '');
+}
+function enter(){
+  $('#gate').style.display = 'none'; $('#app').hidden = false;
+}
+$('#login').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('#go'); btn.disabled = true; btn.textContent = 'جارٍ التحقق…';
+  try{
+    keep(await signIn($('#em').value.trim(), $('#pw').value));
+    msg('gate-msg', ''); enter(); await load();
+  }catch(err){
+    msg('gate-msg', /Invalid login/i.test(err.message) ? 'البريد أو كلمة المرور غير صحيحة.' : netMsg(err));
+  }finally{ btn.disabled = false; btn.textContent = 'دخول'; }
+});
+$('#out').addEventListener('click', () => { forget(); location.reload(); });
+$('#refresh').addEventListener('click', load);
+$('#csv').addEventListener('click', csv);
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  S.range = b.dataset.range; apply();
+}));
+let qt; $('#q').addEventListener('input', e => { clearTimeout(qt); qt = setTimeout(() => { S.q = e.target.value; apply(); }, 220); });
+document.querySelectorAll('#tbl th').forEach(th => th.addEventListener('click', () => {
+  const k = th.dataset.k;
+  S.dir = S.sort === k ? -S.dir : -1; S.sort = k;
+  document.querySelectorAll('#tbl th').forEach(x => x.removeAttribute('aria-sort'));
+  th.setAttribute('aria-sort', S.dir === -1 ? 'descending' : 'ascending');
+  table(S.view);
+}));
+$('#d-close').addEventListener('click', closeDrawer);
+$('#scrim').addEventListener('click', closeDrawer);
+addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!$('#app').hidden) timeseries(S.view); }, 180); });
+
+/* ---------------- بيانات تجريبية (demo=1) ---------------- */
+function demoRows(){
+  const orgs = ['شركة أبجد للاستشارات','مجموعة الفيصلية','مصنع الرياض للبلاستيك','بنك التنمية','شركة نماء','مؤسسة البيان','الشركة السعودية للطاقة','مجموعة الخليج الطبية','شركة رؤى التقنية','مصانع الشرقية'];
+  const names = ['سعد العتيبي','نورة الشمري','فهد القحطاني','ريم الدوسري','خالد الحربي','منال السبيعي'];
+  const yn = ['نعم','لا'], hp = ['نعم','لا','قيد التطوير'];
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const some = (a, k) => a.filter(() => Math.random() < k);
+  const out = [];
+  for (let i = 0; i < 134; i++){
+    const back = Math.floor(Math.pow(Math.random(), 1.6) * 58);
+    const d = new Date(Date.now() - back * 864e5 - Math.random() * 6e7);
+    out.push({
+      id: 'demo-' + i, created_at: d.toISOString(),
+      org_name: pick(orgs) + ' ' + (i + 1), contact_name: pick(names), job_title: 'مدير الشراكات',
+      email: `contact${i}@example.sa`, phone: '05' + String(10000000 + Math.floor(Math.random() * 8e7)).slice(0, 8),
+      has_programs: pick(hp),
+      target_groups: some(GROUPS, .38).length ? some(GROUPS, .38) : [pick(GROUPS)],
+      contribution_types: some(CONTRIB, .45).length ? some(CONTRIB, .45) : [pick(CONTRIB)],
+      existing_initiative: pick(yn), registered_platform: pick(yn),
+      wants_coordination: Math.random() < .72 ? 'نعم' : 'لا',
+      wants_department: pick(yn), has_officer: Math.random() < .4 ? 'نعم' : 'لا',
+      notes: Math.random() < .25 ? 'نرغب بلقاء تعريفي مع الفريق.' : null
+    });
+  }
+  return out.sort((a, b) => b.created_at.localeCompare(a.created_at));
+}
+
+/* ---------------- الإقلاع ---------------- */
+(function boot(){
+  if (DEMO){ enter(); load(); return; }
+  try{
+    const s = JSON.parse(sessionStorage.getItem('csr-session') || 'null');
+    if (s && s.t){ S.token = s.t; S.refresh = s.r; enter(); load(); return; }
+  }catch(e){}
+  gate();
+})();
+</script>
