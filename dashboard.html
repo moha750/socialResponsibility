@@ -426,8 +426,11 @@ async function load(){
   let res;
   try{ res = await api(`/rest/v1/${TABLE}?select=*&order=created_at.desc`); }
   catch(err){ return msg('app-msg', netMsg(err)); }
-  if (res.status === 401 && await renew()) res = await api(`/rest/v1/${TABLE}?select=*&order=created_at.desc`);
-  if (res.status === 401){ forget(); return gate('انتهت الجلسة. سجّل الدخول مرة أخرى.'); }
+  if (res.status === 401 && await renew()){
+    try{ res = await api(`/rest/v1/${TABLE}?select=*&order=created_at.desc`); }
+    catch(err){ return msg('app-msg', netMsg(err)); }
+  }
+  if (res.status === 401) return diagnose(res);
   if (!res.ok){
     const t = await res.text();
     return msg('app-msg', t.includes('permission') || res.status === 403
@@ -435,7 +438,33 @@ async function load(){
       : `تعذّر تحميل الردود (${res.status}). ${t}`);
   }
   S.rows = await res.json();
+  // صفر ردود قد يعني «لا يوجد ردود» أو «الحساب خارج قائمة الصلاحيات» — نفرّق بينهما
+  if (!S.rows.length){
+    try{
+      const chk = await api('/rest/v1/csr_dashboard_admins?select=email&limit=1');
+      if (chk.ok && !(await chk.json()).length)
+        msg('app-msg', 'حسابك غير مدرج في قائمة صلاحيات اللوحة، لذلك لا تظهر أي ردود. أضف بريده إلى جدول csr_dashboard_admins.');
+    }catch(e){}
+  }
   apply();
+}
+async function diagnose(res){
+  const body = await res.text().catch(() => '');
+  let who = '';
+  try{
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + S.token }
+    });
+    who = u.ok ? 'valid' : 'expired';
+  }catch(e){ who = 'offline'; }
+
+  if (who === 'expired'){
+    forget();
+    return gate('انتهت صلاحية الجلسة. سجّل الدخول مرة أخرى.');
+  }
+  // الحساب سليم لكن واجهة البيانات رفضت الرمز — نُبقي الجلسة ونعرض السبب
+  console.error('REST 401:', body);
+  msg('app-msg', `الحساب سليم لكن قاعدة البيانات رفضت الرمز (401). رسالة الخادم: ${body || 'بدون تفاصيل'}`);
 }
 function msg(id, text){ const n = $('#' + id); n.textContent = text; n.classList.toggle('on', !!text); }
 
