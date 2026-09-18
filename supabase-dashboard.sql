@@ -16,6 +16,7 @@ alter table public.csr_dashboard_admins enable row level security;
 
 -- أضف هنا بريد كل شخص يُسمح له بالدخول (نفس البريد المسجّل في Authentication → Users)
 insert into public.csr_dashboard_admins (email) values
+  ('admin@gmail.com'),
   ('S.A.Aldawsari010@hrsd.gov.sa')
 on conflict (email) do nothing;
 
