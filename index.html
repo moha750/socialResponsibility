@@ -62,14 +62,14 @@ legend{padding:0}
   position:relative;color:#fff;
   background:linear-gradient(205deg,#16337A 0%,#10527A 52%,#00706E 100%);
 }
-.panel canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.panel__arcs{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 /* المحتوى يلتصق بالشاشة فلا يتمدد الفراغ مع طول النموذج */
 .panel__inner{
   position:sticky;top:0;z-index:1;min-height:100vh;
   display:flex;flex-direction:column;gap:clamp(22px,3.4vh,38px);
   padding:clamp(28px,4vw,56px);
 }
-.panel__inner > *:not(canvas){position:relative;z-index:1}
+.panel__inner > *:not(.panel__arcs){position:relative;z-index:1}
 .panel{--brand-h:clamp(40px,4.6vw,64px)}
 .brands{display:flex;align-items:center;gap:clamp(10px,1.5vw,18px);flex-wrap:nowrap;min-width:0}
 .brands__rule{width:1px;flex:none;align-self:stretch;min-height:calc(var(--brand-h) * .92);background:rgba(255,255,255,.28)}
@@ -345,7 +345,15 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
   <!-- ======= identity panel ======= -->
   <aside class="panel">
     <div class="panel__inner">
-    <canvas id="arcs-bg" aria-hidden="true"></canvas>
+    <svg class="panel__arcs" viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path d="M127.9 1070.3 A520 520 0 0 1 757.0 473.3" stroke="#fff" stroke-opacity="0.2" stroke-width="1.6" fill="none" vector-effect="non-scaling-stroke"/>
+      <path d="M-49.4 1101.6 A700 700 0 0 1 797.5 297.9" stroke="#fff" stroke-opacity="0.13" stroke-width="1.1" fill="none" vector-effect="non-scaling-stroke"/>
+      <path d="M-226.6 1132.8 A880 880 0 0 1 838.0 122.6" stroke="#fff" stroke-opacity="0.24" stroke-width="2.1" fill="none" vector-effect="non-scaling-stroke"/>
+      <path d="M-423.6 1167.5 A1080 1080 0 0 1 882.9 -72.3" stroke="#fff" stroke-opacity="0.12" stroke-width="1.1" fill="none" vector-effect="non-scaling-stroke"/>
+      <path d="M-640.3 1205.7 A1300 1300 0 0 1 932.4 -286.7" stroke="#fff" stroke-opacity="0.17" stroke-width="1.5" fill="none" vector-effect="non-scaling-stroke"/>
+      <path d="M632.6 -4.2 A760 760 0 0 1 -67.0 648.1" stroke="#fff" stroke-opacity="0.12" stroke-width="1.2" fill="none" vector-effect="non-scaling-stroke"/>
+      <path d="M870.3 29.2 A1000 1000 0 0 1 -50.2 887.6" stroke="#fff" stroke-opacity="0.16" stroke-width="1.8" fill="none" vector-effect="non-scaling-stroke"/>
+    </svg>
 
     <div class="brands fade-up">
       <!-- شعار الوزارة الرسمي، يُعرض بالنسخة البيضاء على الخلفية الداكنة -->
@@ -1008,68 +1016,6 @@ document.getElementById('again').addEventListener('click', () => {
   document.getElementById('foot').style.display = '';
   paint();
 });
-
-/* ---------- أقواس الهوية في الخلفية ---------- */
-(function arcsBg(){
-  const cv = document.getElementById('arcs-bg');
-  if (!cv) return;
-  const ctx = cv.getContext('2d');
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let w = 0, h = 0;
-
-  /* أقواس متحدة المركز تعبر الإطار كاملًا — لا تظهر الدائرة كاملة أبدًا */
-  const NEAR = [               // مركزها خارج الإطار أسفل اليمين (بداية القراءة)
-    { r:.50, a:.20, w:1.6 },
-    { r:.66, a:.13, w:1.1 },
-    { r:.85, a:.24, w:2.1 },
-    { r:1.06, a:.12, w:1.1 },
-    { r:1.28, a:.17, w:1.5 }
-  ];
-  const FAR = [                // مركزها خارج الإطار أعلى اليسار لتتقاطع معها
-    { r:.62, a:.12, w:1.2 },
-    { r:.88, a:.16, w:1.8 }
-  ];
-
-  function size(){
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    w = cv.clientWidth; h = cv.clientHeight;
-    if (!w || !h) return false;
-    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    return true;
-  }
-  function sweep(cx, cy, R, from, to, alpha, lw){
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, from, to);
-    ctx.strokeStyle = 'rgba(255,255,255,' + alpha + ')';
-    ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.stroke();
-  }
-  function draw(t){
-    if (!w || !h) return;
-    ctx.clearRect(0, 0, w, h);
-    const d = Math.hypot(w, h);
-    const cx1 = w * 1.06, cy1 = h * 1.1;          // أسفل اليمين، خارج الإطار
-    const cx2 = -w * .18, cy2 = -h * .16;         // أعلى اليسار، خارج الإطار
-    NEAR.forEach((g, i) => {
-      const drift = still ? 0 : Math.sin(t / 24000 + i * .8) * .035;   // ±٢ درجة كل ٢٤ ثانية
-      sweep(cx1, cy1, g.r * d, Math.PI + .95 + drift, Math.PI * 1.62 + drift, g.a, g.w);
-    });
-    FAR.forEach((g, i) => {
-      const drift = still ? 0 : Math.sin(t / 31000 + i) * .03;
-      sweep(cx2, cy2, g.r * d, .15 + drift, 1.35 + drift, g.a, g.w);
-    });
-  }
-
-  let raf = 0;
-  function loop(ts){ draw(ts); raf = requestAnimationFrame(loop); }
-  function start(){
-    if (!size()) return;
-    cancelAnimationFrame(raf);
-    still ? draw(0) : (raf = requestAnimationFrame(loop));
-  }
-  start();
-  new ResizeObserver(() => { size(); if (still) draw(0); }).observe(cv);
-})();
 
 document.documentElement.style.setProperty('--accent', META[0].a);
 restore(); conditionals(); paint();
