@@ -1,4 +1,5 @@
 <title>لوحة ردود حصر المنشآت</title>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2092%20104%22%3E%3Cpath%20d=%22M46%20100V56%22%20stroke=%22%23007E7B%22%20stroke-width=%2210%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3Cpath%20d=%22M12%2076a34%2034%200%200%201%2068%200%22%20stroke=%22%231B3984%22%20stroke-width=%2210%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3Cpath%20d=%22M48%2054a30%2030%200%200%201%2034-20%22%20stroke=%22%23007E7B%22%20stroke-width=%2210%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3Cpath%20d=%22M44%2054a30%2030%200%200%200-32-18%22%20stroke=%22%232680C2%22%20stroke-width=%2210%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3Cpath%20d=%22M46%2052a26%2026%200%200%201%2018-38%22%20stroke=%22%2301A993%22%20stroke-width=%2210%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -191,7 +192,7 @@ td.ltr{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
     <h1>لوحة ردود حصر المنشآت</h1>
     <p>الدخول مقصور على فريق المسؤولية الاجتماعية.</p>
     <p class="msg" id="gate-msg"></p>
-    <form id="login">
+    <form id="login" onsubmit="return false">
       <div class="f">
         <label for="em">البريد الإلكتروني</label>
         <input class="in" dir="ltr" type="email" id="em" autocomplete="username" required>
@@ -204,6 +205,7 @@ td.ltr{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
     </form>
     <button class="btn btn--ghost" id="try" type="button" style="width:100%;margin-top:10px">استعراض ببيانات تجريبية</button>
     <p style="margin:10px 0 0;font-size:11.5px;color:var(--faint);text-align:center">بيانات مولّدة داخل المتصفح للاستعراض فقط — لا تمسّ قاعدة البيانات.</p>
+    <p id="boot" style="margin:14px 0 0;font-size:11px;color:var(--danger);text-align:center">السكربت لم يعمل في هذا المتصفح — حدّث الصفحة تحديثًا كاملًا (Cmd+Shift+R).</p>
   </div>
 </section>
 
@@ -461,7 +463,7 @@ async function diagnose(res){
 
   if (who === 'expired'){
     forget();
-    return gate('انتهت صلاحية الجلسة. سجّل الدخول مرة أخرى.');
+    return msg('app-msg', `رفض الخادم رمز الجلسة (401). ${body || 'بدون تفاصيل'} — اضغط «خروج» ثم سجّل الدخول من جديد.`);
   }
   // الحساب سليم لكن واجهة البيانات رفضت الرمز — نُبقي الجلسة ونعرض السبب
   console.error('REST 401:', body);
@@ -844,6 +846,8 @@ function demoRows(){
 
 /* ---------------- الإقلاع ---------------- */
 (function boot(){
+  const b = $('#boot');
+  if (b){ b.style.color = 'var(--faint)'; b.textContent = 'اللوحة جاهزة للاتصال بقاعدة البيانات.'; }
   if (DEMO){ enter(); load(); return; }
   try{
     const s = JSON.parse(sessionStorage.getItem('csr-session') || 'null');
