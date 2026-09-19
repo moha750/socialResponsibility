@@ -11,6 +11,9 @@ create table if not exists public.csr_partnership_responses (
 
   -- بيانات المنشأة
   org_name            text not null,
+  region              text,
+  org_size            text,
+  business_activity   text,
   contact_name        text not null,
   job_title           text not null,
   email               text not null,
@@ -18,6 +21,7 @@ create table if not exists public.csr_partnership_responses (
 
   -- مجالات الاهتمام
   has_programs        text,
+  initiatives_on_platform text,
   target_groups       text[] default '{}',
   target_groups_other text,
 
@@ -25,6 +29,7 @@ create table if not exists public.csr_partnership_responses (
   contribution_types  text[] default '{}',
   contribution_other  text,
   existing_initiative text,
+  collaboration_details text,
 
   -- التواصل والمتابعة
   registered_platform text,

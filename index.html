@@ -215,6 +215,24 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
 .other > div{overflow:hidden}
 .other input{margin-top:9px}
 
+.select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(0% + 18px) calc(50% + 2px),calc(0% + 23px) calc(50% + 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-inline-start:38px;cursor:pointer}
+.select:invalid{color:var(--muted)}
+.opts[data-cols="4"]{grid-template-columns:repeat(4,1fr)}
+@media (max-width:760px){.opts[data-cols="4"]{grid-template-columns:repeat(2,1fr)}}
+.links{border:1.5px dashed var(--line-strong);border-radius:12px;padding:14px 16px;background:var(--surface-2)}
+.links__t{margin:0 0 10px;font-size:13px;color:var(--muted)}
+.links__row{display:flex;flex-wrap:wrap;gap:9px}
+.linkbtn{
+  display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);
+  border:1.5px solid var(--line-strong);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;
+  transition:border-color .22s,background .22s,transform .2s;
+}
+.linkbtn:hover,.linkbtn:focus-visible{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent);transform:translateY(-1px)}
+.linkbtn svg{width:16px;height:16px;flex:none;color:var(--accent)}
+.panel__foot a{color:rgba(255,255,255,.78);text-decoration:none;direction:ltr;border-bottom:1px solid rgba(255,255,255,.25)}
+.panel__foot a:hover{color:#fff;border-color:#fff}
+
 /* ---------- buttons ---------- */
 .btn{
   position:relative;border:1.5px solid transparent;border-radius:10px;padding:11px 22px;
@@ -372,7 +390,7 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
       </div>
 
       <div class="panel__foot">
-        <span>csr.gov.sa</span><span>info@csr.gov.sa</span><span>T. +966 11 217 6040</span>
+        <a href="https://csr.gov.sa" target="_blank" rel="noopener">csr.gov.sa</a><a href="https://x.com/SRHRSD_SA" target="_blank" rel="noopener">@SRHRSD_SA</a><span>info@csr.gov.sa</span><span>T. +966 11 217 6040</span>
       </div>
     </div>
   </aside>
@@ -408,21 +426,56 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
               <span class="err"></span>
             </label>
             <label class="field anim" style="--i:1">
+              <span class="field__label">مقر المنشأة (المنطقة) <b class="req">*</b></span>
+              <select class="input select" name="مقر المنشأة" required>
+                <option value="" disabled selected>اختر المنطقة</option>
+                <option>الرياض</option>
+                <option>مكة المكرمة</option>
+                <option>المدينة المنورة</option>
+                <option>القصيم</option>
+                <option>المنطقة الشرقية</option>
+                <option>عسير</option>
+                <option>تبوك</option>
+                <option>حائل</option>
+                <option>الحدود الشمالية</option>
+                <option>جازان</option>
+                <option>نجران</option>
+                <option>الباحة</option>
+                <option>الجوف</option>
+              </select>
+              <span class="err"></span>
+            </label>
+            <fieldset class="group anim" style="--i:2" data-required="radio">
+              <legend class="field__label">حجم المنشأة <b class="req">*</b></legend>
+              <div class="opts" data-cols="4">
+                <label class="opt" data-type="radio"><input type="radio" name="حجم المنشأة" value="صغرى"><span class="box"></span><span class="txt">صغرى</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="حجم المنشأة" value="متوسطة"><span class="box"></span><span class="txt">متوسطة</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="حجم المنشأة" value="كبيرة"><span class="box"></span><span class="txt">كبيرة</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="حجم المنشأة" value="عملاقة"><span class="box"></span><span class="txt">عملاقة</span></label>
+              </div>
+              <span class="err"></span>
+            </fieldset>
+            <label class="field anim" style="--i:3">
+              <span class="field__label">النشاط التجاري للمنشأة <b class="req">*</b></span>
+              <input class="input" name="النشاط التجاري" required placeholder="مثال: مقاولات، تجزئة، تقنية معلومات">
+              <span class="err"></span>
+            </label>
+            <label class="field anim" style="--i:4">
               <span class="field__label">اسم مسؤول التواصل <b class="req">*</b></span>
               <input class="input" name="اسم مسؤول التواصل" required autocomplete="name">
               <span class="err"></span>
             </label>
-            <label class="field anim" style="--i:2">
+            <label class="field anim" style="--i:5">
               <span class="field__label">المسمى الوظيفي <b class="req">*</b></span>
               <input class="input" name="المسمى الوظيفي" required autocomplete="organization-title">
               <span class="err"></span>
             </label>
-            <label class="field anim" style="--i:3">
+            <label class="field anim" style="--i:6">
               <span class="field__label">البريد الإلكتروني <b class="req">*</b></span>
               <input class="input" dir="ltr" type="email" name="البريد الإلكتروني" required autocomplete="email" placeholder="name@company.com">
               <span class="err"></span>
             </label>
-            <label class="field anim" style="--i:4">
+            <label class="field anim" style="--i:7">
               <span class="field__label">رقم التواصل <b class="req">*</b> <span class="hint">— جوال سعودي يبدأ بـ 05</span></span>
               <input class="input" dir="ltr" type="tel" name="رقم التواصل" required inputmode="numeric" autocomplete="tel" placeholder="05XXXXXXXX">
               <span class="err"></span>
@@ -443,7 +496,17 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
               <span class="err"></span>
             </fieldset>
 
-            <fieldset class="group anim" style="--i:1">
+            <fieldset class="group anim" style="--i:1" data-required="radio" id="on-platform" hidden>
+              <legend class="field__label">هل تم إدراج هذه المبادرات في المنصة الوطنية للمسؤولية الاجتماعية؟ <b class="req">*</b></legend>
+              <div class="opts" data-cols="3">
+                <label class="opt" data-type="radio"><input type="radio" name="إدراج المبادرات في المنصة" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="إدراج المبادرات في المنصة" value="لا"><span class="box"></span><span class="txt">لا</span></label>
+                <label class="opt" data-type="radio"><input type="radio" name="إدراج المبادرات في المنصة" value="بعضًا منها"><span class="box"></span><span class="txt">بعضًا منها</span></label>
+              </div>
+              <span class="err"></span>
+            </fieldset>
+
+            <fieldset class="group anim" style="--i:2">
               <legend class="field__label">ما الفئات المستهدفة التي تهتم المنشأة بدعمها؟ <span class="hint">— يمكن اختيار أكثر من فئة</span></legend>
               <div class="opts">
                 <label class="opt" data-type="check"><input type="checkbox" name="الفئات المستهدفة" value="الأيتام والأيتام ذوو الظروف الخاصة"><span class="box"></span><span class="txt">الأيتام والأيتام ذوو الظروف الخاصة</span></label>
@@ -474,12 +537,14 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
               <span class="err"></span>
             </fieldset>
 
-            <fieldset class="group anim" style="--i:1" data-required="radio">
-              <legend class="field__label">هل لدى المنشأة مبادرة أو برنامج قائم يمكن التعاون بشأنه؟ <b class="req">*</b></legend>
+            <fieldset class="group anim" style="--i:1" data-required="radio" data-reveal="نعم">
+              <legend class="field__label">هل لدى المنشأة مبادرة أو برنامج قائم ترغبون في التعاون معنا بشأنه؟ <b class="req">*</b>
+                <span class="hint">— إجابتكم بـ«نعم» تعني أن فريق المسؤولية الاجتماعية سيتواصل معكم لربط المبادرة بالجهات المستفيدة ودراسة سبل دعمها وقياس أثرها.</span></legend>
               <div class="opts" data-cols="3">
                 <label class="opt" data-type="radio"><input type="radio" name="مبادرة قائمة للتعاون" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
                 <label class="opt" data-type="radio"><input type="radio" name="مبادرة قائمة للتعاون" value="لا"><span class="box"></span><span class="txt">لا</span></label>
               </div>
+              <div class="other"><div><input class="input" name="تفاصيل المبادرة" placeholder="اسم المبادرة وما تحتاجونه من دعم"></div></div>
               <span class="err"></span>
             </fieldset>
           </div>
@@ -497,7 +562,21 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
               <span class="err"></span>
             </fieldset>
 
-            <fieldset class="group anim" style="--i:1" data-required="radio">
+            <div class="links anim" style="--i:1">
+              <p class="links__t">للتسجيل ومتابعة الفرص والمبادرات:</p>
+              <div class="links__row">
+                <a class="linkbtn" href="https://csr.gov.sa" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 12h17M12 3.2c2.4 2.4 3.6 5.4 3.6 8.8S14.4 18.4 12 20.8c-2.4-2.4-3.6-5.4-3.6-8.8S9.6 5.6 12 3.2Z" stroke="currentColor" stroke-width="1.8"/></svg>
+                  <span>المنصة الوطنية للمسؤولية الاجتماعية</span>
+                </a>
+                <a class="linkbtn" href="https://x.com/SRHRSD_SA" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.2l-7 8 8.2 10h-6.4l-5-6.1-5.8 6.1H1.5l7.5-8.6L1.2 3h6.6l4.5 5.6L17.5 3Zm-1.1 16.2h1.8L7.7 4.7H5.8l10.6 14.5Z"/></svg>
+                  <span>حساب المسؤولية الاجتماعية في إكس</span>
+                </a>
+              </div>
+            </div>
+
+            <fieldset class="group anim" style="--i:2" data-required="radio">
               <legend class="field__label">هل ترغب المنشأة في التواصل والتنسيق بشأن التسجيل في الفرص الخاصة بمبادرات ومشاريع المسؤولية الاجتماعية؟ <b class="req">*</b></legend>
               <div class="opts" data-cols="3">
                 <label class="opt" data-type="radio"><input type="radio" name="الرغبة في التنسيق حول الفرص" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
@@ -508,7 +587,7 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
               <span class="err"></span>
             </fieldset>
 
-            <fieldset class="group anim" style="--i:2" data-required="radio">
+            <fieldset class="group anim" style="--i:3" data-required="radio">
               <legend class="field__label">هل ترغب المنشأة في تأسيس إدارة المسؤولية الاجتماعية ضمن استراتيجية المسؤولية الاجتماعية للشركات؟ <b class="req">*</b></legend>
               <div class="opts" data-cols="3">
                 <label class="opt" data-type="radio"><input type="radio" name="تأسيس إدارة للمسؤولية الاجتماعية" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
@@ -517,7 +596,7 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
               <span class="err"></span>
             </fieldset>
 
-            <fieldset class="group anim" style="--i:3" data-required="radio">
+            <fieldset class="group anim" style="--i:4" data-required="radio">
               <legend class="field__label">هل تم تعيين مسؤول مختص بالمسؤولية الاجتماعية في المنشأة؟ <b class="req">*</b></legend>
               <div class="opts" data-cols="3">
                 <label class="opt" data-type="radio"><input type="radio" name="تعيين مسؤول مختص" value="نعم"><span class="box"></span><span class="txt">نعم</span></label>
@@ -526,7 +605,7 @@ textarea.input{resize:vertical;min-height:96px;line-height:1.7}
               <span class="err"></span>
             </fieldset>
 
-            <label class="field anim" style="--i:4">
+            <label class="field anim" style="--i:5">
               <span class="field__label">الملاحظات والمقترحات <span class="hint">— اختياري</span></span>
               <textarea class="input" name="الملاحظات والمقترحات" rows="4" placeholder="ما الذي تودّون إضافته؟"></textarea>
             </label>
@@ -619,7 +698,7 @@ let step = 1, sent = false;
 /* ---------- required-field bookkeeping ---------- */
 const required = s => [
   ...steps[s-1].querySelectorAll('.field > .input[required]'),
-  ...steps[s-1].querySelectorAll('.group[data-required]')
+  ...steps[s-1].querySelectorAll('.group[data-required]:not([hidden])')
 ];
 const filled = el => {
   if (el.classList.contains('group')) return !!el.querySelector('input:checked');
@@ -725,14 +804,31 @@ form.addEventListener('change', e => {
     const group = opt.closest('.group');
     const other = group && group.querySelector('.other');
     if (other){
-      const on = !!group.querySelector('.opt[data-other] input:checked');
+      const want = group.dataset.reveal;
+      const on = want
+        ? [...group.querySelectorAll('input:checked')].some(i => i.value === want)
+        : !!group.querySelector('.opt[data-other] input:checked');
       other.classList.toggle('is-open', on);
       if (on) setTimeout(() => other.querySelector('input').focus(), 260);
       else other.querySelector('input').value = '';
     }
   }
+  conditionals();
   paint(); save();
 });
+
+/* سؤال إدراج المبادرات يظهر فقط لمن لديه برامج قائمة أو قيد التطوير */
+function conditionals(){
+  const box = document.getElementById('on-platform');
+  if (!box) return;
+  const v = (form.querySelector('[name="وجود برامج للمسؤولية الاجتماعية"]:checked') || {}).value;
+  const show = v === 'نعم' || v === 'قيد التطوير';
+  if (!show && !box.hidden){
+    box.querySelectorAll('input:checked').forEach(i => i.checked = false);
+    box.classList.remove('is-bad');
+  }
+  box.hidden = !show;
+}
 
 /* ---------- draft (per viewer, this browser only) ---------- */
 const KEY = 'csr-survey-draft';
@@ -755,8 +851,14 @@ function restore(){
     });
     form.querySelectorAll('.group').forEach(g => {
       const other = g.querySelector('.other');
-      if (other && g.querySelector('.opt[data-other] input:checked')) other.classList.add('is-open');
+      if (!other) return;
+      const want = g.dataset.reveal;
+      const on = want
+        ? [...g.querySelectorAll('input:checked')].some(i => i.value === want)
+        : !!g.querySelector('.opt[data-other] input:checked');
+      other.classList.toggle('is-open', on);
     });
+    conditionals();
   }catch(e){}
 }
 btnClear.addEventListener('click', () => {
@@ -764,6 +866,7 @@ btnClear.addEventListener('click', () => {
   form.reset();
   form.querySelectorAll('.is-open').forEach(o => o.classList.remove('is-open'));
   form.querySelectorAll('.is-bad').forEach(o => o.classList.remove('is-bad'));
+  conditionals();
   try{ localStorage.removeItem(KEY); }catch(e){}
   paint();
 });
@@ -782,16 +885,21 @@ function toRow(d){
   const many = k => (d[k] ? [].concat(d[k]) : []);
   return {
     org_name:            one('اسم المنشأة'),
+    region:              one('مقر المنشأة'),
+    org_size:            one('حجم المنشأة'),
+    business_activity:   one('النشاط التجاري'),
     contact_name:        one('اسم مسؤول التواصل'),
     job_title:           one('المسمى الوظيفي'),
     email:               one('البريد الإلكتروني'),
     phone:               one('رقم التواصل'),
     has_programs:        one('وجود برامج للمسؤولية الاجتماعية'),
+    initiatives_on_platform: one('إدراج المبادرات في المنصة'),
     target_groups:       many('الفئات المستهدفة'),
     target_groups_other: one('فئات أخرى'),
     contribution_types:  many('نوع المساهمة'),
     contribution_other:  one('مساهمة أخرى'),
     existing_initiative: one('مبادرة قائمة للتعاون'),
+    collaboration_details: one('تفاصيل المبادرة'),
     registered_platform: one('التسجيل في المنصة الوطنية'),
     wants_coordination:  one('الرغبة في التنسيق حول الفرص'),
     coordination_other:  one('تفاصيل أخرى للتنسيق'),
@@ -801,23 +909,39 @@ function toRow(d){
     payload:             d
   };
 }
+const NEW_COLUMNS = ['region','org_size','business_activity','initiatives_on_platform','collaboration_details'];
+async function post(row){
+  return fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
+    method:'POST',
+    headers:{
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(row)
+  });
+}
 async function send(data){
   if (!SUPABASE_KEY){
     console.warn('لم يُضبط SUPABASE_KEY — النموذج في وضع المعاينة ولم تُحفظ الإجابة.');
     return {ok:true, preview:true};
   }
   try{
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}`, {
-      method:'POST',
-      headers:{
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify(toRow(data))
-    });
-    if (!res.ok) return {ok:false, msg:`رفض الخادم الحفظ (${res.status}). ${await res.text()}`};
+    const row = toRow(data);
+    let res = await post(row);
+    if (!res.ok){
+      const text = await res.text();
+      // الأعمدة الجديدة غير موجودة بعد في قاعدة البيانات: نحفظ بلا فقدان (الإجابة كاملة في payload)
+      if (text.includes('PGRST204')){
+        console.warn('أعمدة جديدة غير موجودة — شغّل supabase-migrate-v2.sql. حُفظت الإجابة بالحقول المتاحة.');
+        NEW_COLUMNS.forEach(k => delete row[k]);
+        res = await post(row);
+        if (res.ok) return {ok:true};
+        return {ok:false, msg:`رفض الخادم الحفظ (${res.status}). ${await res.text()}`};
+      }
+      return {ok:false, msg:`رفض الخادم الحفظ (${res.status}). ${text}`};
+    }
     return {ok:true};
   }catch(err){
     return {ok:false, msg:'تعذّر الاتصال بالخادم. تحقق من الاتصال بالإنترنت وحاول مرة أخرى.'};
@@ -909,7 +1033,7 @@ document.getElementById('again').addEventListener('click', () => {
 })();
 
 document.documentElement.style.setProperty('--accent', META[0].a);
-restore(); paint();
+restore(); conditionals(); paint();
 </script>
 </body>
 </html>

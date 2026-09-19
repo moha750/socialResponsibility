@@ -304,6 +304,18 @@ td.ltr{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
     </article>
 
     <article class="card card--half">
+      <div class="card__h"><h2 class="card__t">المناطق</h2><span class="stamp" id="rg-note"></span></div>
+      <p class="card__s">أين تقع المنشآت المشاركة.</p>
+      <div id="regions"></div>
+    </article>
+
+    <article class="card card--half">
+      <div class="card__h"><h2 class="card__t">حجم المنشآت</h2><span class="stamp" id="sz-note"></span></div>
+      <p class="card__s">تصنيف المنشآت المشاركة حسب حجمها.</p>
+      <div id="sizes"></div>
+    </article>
+
+    <article class="card card--half">
       <div class="card__h"><h2 class="card__t">الجاهزية والحوكمة</h2></div>
       <p class="card__s">نسبة المنشآت التي أجابت بـ«نعم» في كل بند.</p>
       <div class="meters" id="meters"></div>
@@ -323,6 +335,8 @@ td.ltr{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
           <thead><tr>
             <th data-k="created_at" aria-sort="descending">التاريخ</th>
             <th data-k="org_name">المنشأة</th>
+            <th data-k="region">المنطقة</th>
+            <th data-k="org_size">الحجم</th>
             <th data-k="contact_name">مسؤول التواصل</th>
             <th data-k="phone">الجوال</th>
             <th data-k="has_programs">برامج قائمة</th>
@@ -496,7 +510,19 @@ function render(){
   bars('#contrib', ct, n, CONTRIB_SHORT);
   $('#tg-note').textContent = n && tg[0] && tg[0][1] ? `الأعلى: ${GROUP_SHORT[tg[0][0]] || tg[0][0]}` : '';
   $('#ct-note').textContent = n && ct[0] && ct[0][1] ? `الأعلى: ${CONTRIB_SHORT[ct[0][0]] || ct[0][0]}` : '';
+  const rg = single(v, 'region'), sz = single(v, 'org_size', SIZES);
+  bars('#regions', rg, v.filter(r => r.region).length, {});
+  bars('#sizes', sz, v.filter(r => r.org_size).length, {});
+  $('#rg-note').textContent = rg.length && rg[0][1] ? `الأعلى: ${rg[0][0]}` : '';
+  $('#sz-note').textContent = sz.length && sz[0][1] ? `الأعلى: ${sz[0][0]}` : '';
   meters(v); heat(v); table(v);
+}
+const SIZES = ['صغرى','متوسطة','كبيرة','عملاقة'];
+function single(rows, field, order){
+  const map = new Map((order || []).map(k => [k, 0]));
+  rows.forEach(r => { const v = r[field]; if (v) map.set(v, (map.get(v) || 0) + 1); });
+  const out = [...map].filter(([, c]) => c > 0);
+  return order ? out.sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0])) : out.sort((a, b) => b[1] - a[1]);
 }
 function tally(rows, field, known){
   const map = new Map([...known.map(k => [k, 0]), ['أخرى', 0]]);
@@ -621,10 +647,32 @@ function maturity(v){
     s.append(sw, el('span', null, `${k} — ${N(counts[i])} (${PCT(counts[i], total)}%)`));
     legend.append(s);
   });
+  const onPlat = ['نعم','بعضًا منها','لا'].map(k => v.filter(r => r.initiatives_on_platform === k).length);
+  const onTotal = onPlat.reduce((a, b) => a + b, 0);
   const ready = PCT(counts[0] + counts[1], total);
   const note = el('p', 'card__s', `${ready}% من المنشآت لديها برامج قائمة أو قيد التطوير — وهي الأقرب للتفعيل السريع.`);
   note.style.margin = '16px 0 0';
   host.append(stack, legend, note);
+  if (onTotal){
+    const t = el('p', 'card__s', 'إدراج المبادرات في المنصة الوطنية');
+    t.style.cssText = 'margin:18px 0 8px;font-weight:600;color:var(--ink)';
+    const s2 = el('div', 'stack'); s2.style.height = '26px';
+    [['نعم','var(--s2)'],['بعضًا منها','var(--s3)'],['لا','var(--s-null)']].forEach(([k, c], i) => {
+      if (!onPlat[i]) return;
+      const seg = el('div'); seg.style.background = c; seg.style.flex = onPlat[i];
+      const pct = PCT(onPlat[i], onTotal);
+      if (pct >= 16) seg.textContent = pct + '%';
+      seg.addEventListener('pointermove', e => tip(e, `<b>${k}</b>${N(onPlat[i])} منشأة · ${pct}%`));
+      seg.addEventListener('pointerleave', tipOff);
+      s2.append(seg);
+    });
+    const lg = el('div', 'legend');
+    [['نعم','var(--s2)'],['بعضًا منها','var(--s3)'],['لا','var(--s-null)']].forEach(([k, c], i) => {
+      const sp = el('span'); const sw = el('i'); sw.style.background = c;
+      sp.append(sw, el('span', null, `${k} — ${N(onPlat[i])}`)); lg.append(sp);
+    });
+    host.append(t, s2, lg);
+  }
 }
 
 /* ---------------- أشرطة ---------------- */
@@ -704,10 +752,11 @@ function heat(v){
 
 /* ---------------- الجدول ---------------- */
 const FIELDS = [
-  ['created_at','تاريخ الإرسال'],['org_name','اسم المنشأة'],['contact_name','مسؤول التواصل'],
+  ['created_at','تاريخ الإرسال'],['org_name','اسم المنشأة'],['region','المنطقة'],
+  ['org_size','حجم المنشأة'],['business_activity','النشاط التجاري'],['contact_name','مسؤول التواصل'],
   ['job_title','المسمى الوظيفي'],['email','البريد الإلكتروني'],['phone','رقم التواصل'],
-  ['has_programs','برامج قائمة'],['target_groups','الفئات المستهدفة'],['target_groups_other','فئات أخرى'],
-  ['contribution_types','نوع المساهمة'],['contribution_other','مساهمة أخرى'],['existing_initiative','مبادرة قائمة'],
+  ['has_programs','برامج قائمة'],['initiatives_on_platform','إدراج المبادرات في المنصة'],['target_groups','الفئات المستهدفة'],['target_groups_other','فئات أخرى'],
+  ['contribution_types','نوع المساهمة'],['contribution_other','مساهمة أخرى'],['existing_initiative','مبادرة قائمة'],['collaboration_details','تفاصيل المبادرة'],
   ['registered_platform','التسجيل في المنصة'],['wants_coordination','الرغبة في التنسيق'],['coordination_other','تفاصيل التنسيق'],
   ['wants_department','تأسيس إدارة'],['has_officer','تعيين مسؤول'],['notes','ملاحظات ومقترحات']
 ];
@@ -730,6 +779,8 @@ function table(v){
     const tr = el('tr');
     tr.append(Object.assign(el('td', null, dateShort(r.created_at)), { title: dateLong(r.created_at) }));
     tr.append(el('td', null, r.org_name || '—'));
+    tr.append(el('td', null, r.region || '—'));
+    tr.append(el('td', null, r.org_size || '—'));
     tr.append(el('td', null, r.contact_name || '—'));
     const ph = el('td', 'ltr', r.phone || '—'); tr.append(ph);
     const td1 = el('td'); td1.append(pill(r.has_programs)); tr.append(td1);
@@ -837,6 +888,10 @@ function demoRows(){
       org_name: pick(orgs) + ' ' + (i + 1), contact_name: pick(names), job_title: 'مدير الشراكات',
       email: `contact${i}@example.sa`, phone: '05' + String(10000000 + Math.floor(Math.random() * 8e7)).slice(0, 8),
       has_programs: pick(hp),
+      region: pick(['الرياض','مكة المكرمة','المنطقة الشرقية','القصيم','عسير','المدينة المنورة','تبوك','جازان']),
+      org_size: pick(['صغرى','متوسطة','كبيرة','عملاقة']),
+      business_activity: pick(['مقاولات','تجزئة','تقنية معلومات','خدمات مالية','صناعة','لوجستيات']),
+      initiatives_on_platform: pick(['نعم','لا','بعضًا منها']),
       target_groups: some(GROUPS, .38).length ? some(GROUPS, .38) : [pick(GROUPS)],
       contribution_types: some(CONTRIB, .45).length ? some(CONTRIB, .45) : [pick(CONTRIB)],
       existing_initiative: pick(yn), registered_platform: pick(yn),
