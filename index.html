@@ -62,7 +62,7 @@ legend{padding:0}
   position:relative;color:#fff;
   background:linear-gradient(205deg,#16337A 0%,#10527A 52%,#00706E 100%);
 }
-.panel canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5;z-index:0;pointer-events:none}
+.panel canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 /* المحتوى يلتصق بالشاشة فلا يتمدد الفراغ مع طول النموذج */
 .panel__inner{
   position:sticky;top:0;z-index:1;min-height:100vh;
@@ -1009,36 +1009,66 @@ document.getElementById('again').addEventListener('click', () => {
   paint();
 });
 
-/* ---------- ambient arcs (identity motif) ---------- */
+/* ---------- أقواس الهوية في الخلفية ---------- */
 (function arcsBg(){
-  const cv = document.getElementById('arcs-bg'), ctx = cv.getContext('2d');
+  const cv = document.getElementById('arcs-bg');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let w, h, dpr, t = 0;
-  const arcs = Array.from({length:9}, (_, i) => ({
-    r: .18 + i * .12, a: Math.random() * Math.PI * 2,
-    span: .7 + Math.random() * 1.5, v: (i % 2 ? 1 : -1) * (.00012 + Math.random() * .0002),
-    w: i % 3 === 0 ? 2.4 : 1.1, o: .10 + Math.random() * .22
-  }));
+  let w = 0, h = 0;
+
+  /* أقواس متحدة المركز تعبر الإطار كاملًا — لا تظهر الدائرة كاملة أبدًا */
+  const NEAR = [               // مركزها خارج الإطار أسفل اليمين (بداية القراءة)
+    { r:.50, a:.20, w:1.6 },
+    { r:.66, a:.13, w:1.1 },
+    { r:.85, a:.24, w:2.1 },
+    { r:1.06, a:.12, w:1.1 },
+    { r:1.28, a:.17, w:1.5 }
+  ];
+  const FAR = [                // مركزها خارج الإطار أعلى اليسار لتتقاطع معها
+    { r:.62, a:.12, w:1.2 },
+    { r:.88, a:.16, w:1.8 }
+  ];
+
   function size(){
-    dpr = Math.min(devicePixelRatio || 1, 2);
+    const dpr = Math.min(devicePixelRatio || 1, 2);
     w = cv.clientWidth; h = cv.clientHeight;
-    cv.width = w * dpr; cv.height = h * dpr;
+    if (!w || !h) return false;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return true;
   }
-  function draw(){
+  function sweep(cx, cy, R, from, to, alpha, lw){
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, from, to);
+    ctx.strokeStyle = 'rgba(255,255,255,' + alpha + ')';
+    ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.stroke();
+  }
+  function draw(t){
+    if (!w || !h) return;
     ctx.clearRect(0, 0, w, h);
-    const cx = w * .12, cy = h * .82, unit = Math.max(w, h);
-    arcs.forEach(a => {
-      ctx.beginPath();
-      const drift = t * a.v * 0.06;            // دوران بطيء جدًا: جزء من درجة في الثانية
-      ctx.arc(cx, cy, a.r * unit, a.a + drift, a.a + a.span + drift);
-      ctx.strokeStyle = `rgba(255,255,255,${a.o})`;
-      ctx.lineWidth = a.w; ctx.lineCap = 'round'; ctx.stroke();
+    const d = Math.hypot(w, h);
+    const cx1 = w * 1.06, cy1 = h * 1.1;          // أسفل اليمين، خارج الإطار
+    const cx2 = -w * .18, cy2 = -h * .16;         // أعلى اليسار، خارج الإطار
+    NEAR.forEach((g, i) => {
+      const drift = still ? 0 : Math.sin(t / 24000 + i * .8) * .035;   // ±٢ درجة كل ٢٤ ثانية
+      sweep(cx1, cy1, g.r * d, Math.PI + .95 + drift, Math.PI * 1.62 + drift, g.a, g.w);
+    });
+    FAR.forEach((g, i) => {
+      const drift = still ? 0 : Math.sin(t / 31000 + i) * .03;
+      sweep(cx2, cy2, g.r * d, .15 + drift, 1.35 + drift, g.a, g.w);
     });
   }
-  function loop(ts){ t = ts; draw(); requestAnimationFrame(loop); }
-  size(); addEventListener('resize', () => { size(); draw(); });
-  still ? draw() : requestAnimationFrame(loop);
+
+  let raf = 0;
+  function loop(ts){ draw(ts); raf = requestAnimationFrame(loop); }
+  function start(){
+    if (!size()) return;
+    cancelAnimationFrame(raf);
+    still ? draw(0) : (raf = requestAnimationFrame(loop));
+  }
+  start();
+  new ResizeObserver(() => { size(); if (still) draw(0); }).observe(cv);
 })();
 
 document.documentElement.style.setProperty('--accent', META[0].a);
